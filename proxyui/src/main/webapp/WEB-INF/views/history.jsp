@@ -310,16 +310,16 @@
         return cellvalue;
     }
 
-        function dateFormatter(cellvalue, options, rowObject) {
-          var date = new Date(cellvalue)
-        
-          if (date instanceof Date && isFinite(date)) {
-            var options = { hour: '2-digit', minute: '2-digit', second: '2-digit', month: 'short', day: 'numeric' };
-            return date.toLocaleDateString("en-US", options);
-          }
-        
-          return cellvalue;
-        }
+    function dateFormatter(cellvalue, options, rowObject) {
+      var date = new Date(cellvalue)
+
+      if (date instanceof Date && isFinite(date)) {
+        var options = { hour: '2-digit', minute: '2-digit', second: '2-digit', month: 'short', day: 'numeric' };
+        return date.toLocaleDateString("en-US", options);
+      }
+
+      return cellvalue;
+    }
 
     var invalidRows = []
     function validFormatter(cellvalue, options, rowObject) {
