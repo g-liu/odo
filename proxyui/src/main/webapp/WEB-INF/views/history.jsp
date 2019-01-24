@@ -301,13 +301,6 @@
                         }).trigger("reloadGrid");
     }
 
-    function scrollableFormatter(cellvalue, options, rowObject) {
-        // this divId will be used to get pop over content
-        var divId = options.colModel.name + '_' + currentHistoryId;
-        var scrollView = '<div id="' + divId + '" style="overflow-y:scroll;">';
-        scrollView += cellvalue + '</div>';
-        return scrollView;
-    }
 
     var currentHistoryId = -1;
 
@@ -316,6 +309,17 @@
         currentHistoryId = cellvalue;
         return cellvalue;
     }
+
+        function dateFormatter(cellvalue, options, rowObject) {
+          var date = new Date(cellvalue)
+        
+          if (date instanceof Date && isFinite(date)) {
+            var options = { hour: '2-digit', minute: '2-digit', second: '2-digit', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString("en-US", options);
+          }
+        
+          return cellvalue;
+        }
 
     var invalidRows = []
     function validFormatter(cellvalue, options, rowObject) {
@@ -658,7 +662,9 @@
                     index : 'createdAt',
                     width : 150,
                     editable : false,
-                    align : 'center'
+                    align : 'center',
+                    sorttype : 'date',
+                    formatter : dateFormatter,
                 }, {
                     name : 'requestType',
                     index : 'requestType',
@@ -670,18 +676,16 @@
                     index : 'originalRequestURL',
                     width : 375,
                     editable : false,
-                    formatter : scrollableFormatter,
                     cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal;'
+                        return 'style="white-space: normal; word-break: break-all;"'
                     }
                 }, {
                     name : 'requestParams',
                     index : 'requestParams',
                     width : 300,
                     editable : false,
-                    formatter : scrollableFormatter,
                     cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal;'
+                        return 'style="white-space: normal; word-break: break-all; font-family: monospace;"'
                     }
                 }, {
                     name : 'responseCode',
