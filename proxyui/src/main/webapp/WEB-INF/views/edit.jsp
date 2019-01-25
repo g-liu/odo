@@ -656,7 +656,7 @@
                     beforeShowForm: function(formid) {
                         /* CREATE PLACEHOLDERS FOR ADD FORM. */
                         /* INITIALLY, GRAY */
-                        $("#srcUrl").val(getExampleText("src"));
+                        $("#srcUrl").attr("placeholder", getExampleText("src"));
                         $("#srcUrl").css("color", "gray");
                     },
                     afterShowForm: function(formid) {
@@ -897,10 +897,10 @@
 
                             /* CREATE PLACEHOLDERS FOR ADD FORM. */
                             /* INITIALLY, GRAY */
-                            $("#pathName").val(getExampleText("pathName"));
+                            $("#pathName").attr("placeholder", getExampleText("pathName"));
                             $("#pathName").css("color", "gray");
 
-                            $("#path").val(getExampleText("path"));
+                            $("#path").attr("placeholder", getExampleText("path"));
                             $("#path").css("color", "gray");
                         },
                         afterShowForm: function(formid) {
@@ -1045,28 +1045,20 @@
                 $("#tabs").css("overflow", "auto");
                 $("#tabs").css("min-height", "500px");
                 $("#tabs").css("resize", "both");
-                $("#sel1").select2();
 
                 var currentHTML = $("#gview_serverlist > .ui-jqgrid-titlebar > span").html();
-                var dropDown = "&nbsp;&nbsp;&nbsp;<input id='serverGroupSelection' style='width:300px%'></input>&nbsp;&nbsp;<button id='editServerGroups' type='button' class='btn btn-xs' onClick='toggleServerGroupEdit()'>Server Groups ></button>";
+                var dropDown = "&nbsp;&nbsp;&nbsp;<select id='serverGroupSelection' style='width:300px%'></select>&nbsp;&nbsp;<button id='editServerGroups' type='button' class='btn btn-xs' onClick='toggleServerGroupEdit()'>Server Groups ></button>";
                 $("#gview_serverlist > .ui-jqgrid-titlebar > span").html(currentHTML + dropDown);
 
                 $("#serverGroupSelection").select2({
-                    initSelection: function(element, callback){
-                            $.ajax('<c:url value="/api/profile/${profile_id}/clients/${clientUUID}"/>').done(function(data) {
-                                $.ajax('<c:url value="/api/servergroup"/>' + '/' + data.client.activeServerGroup +'?profileId=${profile_id}'
-                                ).done(function(data2) {
-                                    callback({id: data.client.activeServerGroup, text: data2.name});
-                                });
-                            });
-                    },
+                    placeholder: "Default",
                     ajax: {
                         url: '<c:url value="/api/servergroup"/>' + '?profileId=${profile_id}',
                         dataType: "json",
                         data: function (term, page) {
                             return {search: term};
                         },
-                        results: function(data){
+                        processResults: function(data){
                             var myResults = [];
                             myResults.push({id: 0, text: "Default"});
                             jQuery.each(data.servergroups, function(index, value){
@@ -1084,10 +1076,10 @@
                         if ($(data).filter(function() {
                             return this.text.localeCompare(term)===0;
                         }).length===0) {
-                            return {id:term, text:term, isNew:true};
+                            return {id: term, text: term, isNew: true};
                         }
                     },
-                    formatResult: function(term) {
+                    templateResult: function(term) {
                         if (term.isNew) {
                             return 'create "' + term.text + '"';
                         } else {
@@ -1095,24 +1087,25 @@
                         }
                     }
                 });
-                $("#serverGroupSelection").on("change", function(e) {
-                    if(e.added.isNew) {
+                $("#serverGroupSelection").on("select2:select", function(e) {
+                    if(e.params.data.isNew === true) {
                         $.ajax({
                             type: "POST",
                             url: '<c:url value="/api/servergroup" />',
-                            data: ({name : e.added.id, profileId: "${profile_id}"}),
+                            data: ({name : e.params.data.id, profileId: "${profile_id}"}),
                             success: function(data){
                                 setActiveServerGroup(data.id);
                                 reloadGrid("#serverGroupList");
                             }
                         });
                     } else {
-                        setActiveServerGroup(e.added.id);
+                        setActiveServerGroup(e.params.data.id);
                     }
                 });
                 populateGroups();
 
             });
+
             jQuery("#packages").jqGrid('navGrid','#packages',{
                 edit:false,
                 add:true,
