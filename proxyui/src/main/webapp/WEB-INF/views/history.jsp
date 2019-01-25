@@ -24,6 +24,8 @@
         .has-switch {height: 30px}
 
         .altRowClass { background: #EEEEEE; }
+
+        textarea.preformatted { font-family: monospace; }
      </style>
 </head>
 <body>
@@ -90,18 +92,13 @@
                     </h3>
                     <h3 style="display: inline;">
                         <div class="btn-group btn-group-sm" style="float:right" id="responseButtons">
-                            <button type="button" class="btn btn-default"
-                                id="showModifiedResponseButton" onClick="showModifiedResponse()">Modified</button>
-                            <button type="button" class="btn btn-default"
-                                id="showOriginalResponseButton" onClick="showOriginalResponse()">Original</button>
-                            <button type="button" class="btn btn-default"
-                                id="showChangedResponseButton" onClick="showChangedResponse()">View Diff</button>
+                            <button type="button" class="btn btn-default" id="showModifiedResponseButton" onClick="showModifiedResponse()">Modified</button>
+                            <button type="button" class="btn btn-default" id="showOriginalResponseButton" onClick="showOriginalResponse()">Original</button>
+                            <button type="button" class="btn btn-default" id="showChangedResponseButton" onClick="showChangedResponse()">View Diff</button>
                         </div>
                     </h3>
-                    <textarea class="form-control" rows="3" style="width: 100%; margin-top: 6px"
-                        id="responseHeaders"></textarea>
-                    <textarea class="form-control" rows="3" style="width: 100%; display:none"
-                        id="originalResponseHeaders"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="3" style="width: 100%; margin-top: 6px" id="responseHeaders"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="3" style="width: 100%; display:none" id="originalResponseHeaders"></textarea>
                     <div class="form-control" id = "originalResponseHeaderChange" style="width: 100%; height: 80px;overflow-y: scroll; resize:both; display:none"></div>
                     <div style="clear: both"></div>
                     <h3 style="display: inline;">
@@ -109,10 +106,8 @@
                     </h3>
                     <h3 style="display: inline;">
                         <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-default"
-                                id="showRawResponseDataButton" onClick="showRawResponseData()">Raw</button>
-                            <button type="button" class="btn btn-default"
-                                id="showRawFormattedDataButton" onClick="showFormattedResponseData(false)">Formatted</button>
+                            <button type="button" class="btn btn-default" id="showRawResponseDataButton" onClick="showRawResponseData()">Raw</button>
+                            <button type="button" class="btn btn-default" id="showRawFormattedDataButton" onClick="showFormattedResponseData(false)">Formatted</button>
                         </div>
                     </h3>
                     <h3 style="display: inline;">
@@ -123,17 +118,15 @@
                     </h3>
                     <h3 style="display: inline;">
                         <div class="btn-group btn-group-sm">
-                            <button type="button" class="btn btn-default"
-                                id="downloadResponseDataButton" onClick="downloadResponseData()">Export Response</button>
+                            <button type="button" class="btn btn-default" id="downloadResponseDataButton" onClick="downloadResponseData()">Export Response</button>
                         </div>
                     </h3>
-                    <textarea class="form-control" rows="20" style="width: 100%"
-                        id="responseRaw"></textarea>
-                    <textarea class="form-control" rows="20" style="width: 100%; display:none"
-                        id="originalResponseRaw"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="20" style="width: 100%" id="responseRaw"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="20" style="width: 100%; display:none" id="originalResponseRaw"></textarea>
                     <div class="form-control" id = "originalResponseChange" style="width: 100%; height: 450px;overflow-y: scroll;  resize:both; display:none"></div>
                 </div>
             </div>
+
             <div id="tabs-2">
                 <div class="" style="float: left; width: 100%">
                     <h3 style="display: inline;">
@@ -144,39 +137,28 @@
                     </h3>
                     <h3 style="display: inline">
                         <div class="btn-group btn-group-sm" style="float:right" id="requestButtons">
-                            <button type="button" class="btn btn-default"
-                                id="showModifiedRequestButton" onClick="showModifiedRequestData()">Modified</button>
-                            <button type="button" class="btn btn-default"
-                                id="showOriginalButton" onClick="showOriginalRequestData()">Original</button>
-                            <button type="button" class="btn btn-default"
-                                id="showChangedButton" onClick="showChangedRequestData()">View Diff</button>
+                            <button type="button" class="btn btn-default" id="showModifiedRequestButton" onClick="showModifiedRequestData()">Modified</button>
+                            <button type="button" class="btn btn-default" id="showOriginalButton" onClick="showOriginalRequestData()">Original</button>
+                            <button type="button" class="btn btn-default" id="showChangedButton" onClick="showChangedRequestData()">View Diff</button>
                         </div>
                     </h3>
-                    <textarea class="form-control" rows="1" style="width: 100%; margin-top: 6px"
-                        id="requestQuery"></textarea>
-                    <textarea class="form-control" rows="1" style="width: 100%; display: none"
-                        id="originalRequestQuery"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="1" style="width: 100%; margin-top: 6px" id="requestQuery"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="1" style="width: 100%; display: none" id="originalRequestQuery"></textarea>
                     <div class="form-control" id = "originalRequestQueryChange" style="width: 100%; height: 40px;overflow-y: scroll; resize:both; display: none"></div>
                     <div style="clear: both"></div>
                     <h3>
                         <span class="label label-default">Parameters</span>
                     </h3>
-                    <textarea class="form-control" rows="1" style="width: 100%; overflow-y: scroll; float:left"
-                        id="requestParameters"></textarea>
-                    <textarea class="form-control" rows="1" style="width: 100%; float: left; overflow-y: scroll; display: none"
-                        id="originalRequestParameters"></textarea>
-                    <div class="form-control" style="width: 100%; float: left; display: none; overflow-y: scroll; resize:both"
-                        id="originalRequestParametersChanged"></div>
+                    <textarea readonly class="form-control preformatted" style="width: 100%; overflow-y: scroll; float:left" id="requestParameters"></textarea>
+                    <textarea readonly class="form-control preformatted" style="width: 100%; float: left; overflow-y: scroll; display: none" id="originalRequestParameters"></textarea>
+                    <div class="form-control" style="width: 100%; float: left; display: none; overflow-y: scroll; resize:both" id="originalRequestParametersChanged"></div>
                     <div style="clear: both"></div>
                     <h3>
                         <span class="label label-default">Headers</span>
                     </h3>
-                    <textarea class="form-control" rows="3" style="width: 100%; float:left"
-                        id="requestHeaders"></textarea>
-                    <textarea class="form-control" rows="3" style="width: 100%; float: left; display: none"
-                        id="originalRequestHeaders"></textarea>
-                    <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize:both"
-                        id="originalRequestHeadersChanged"></div>
+                    <textarea readonly class="form-control preformatted" rows="3" style="width: 100%; float:left" id="requestHeaders"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="3" style="width: 100%; float: left; display: none" id="originalRequestHeaders"></textarea>
+                    <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize:both" id="originalRequestHeadersChanged"></div>
                     <div style="clear: both"></div>
                     <div style="padding-bottom: 10px; padding-top: 10px">
                         <h3 style="display: inline;">
@@ -186,14 +168,12 @@
                             <span class="label label-info" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span>
                         </h3>
                     </div>
-                    <textarea class="form-control" rows="10" style="width: 100%; float:left"
-                        id="requestPOSTData"></textarea>
-                    <textarea class="form-control" rows="10" style="width: 100%; float: left; display: none"
-                        id="originalRequestPOSTData"></textarea>
-                    <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize:both"
-                        id="originalRequestPOSTDataChanged"></div>
+                    <textarea readonly class="form-control preformatted" rows="10" style="width: 100%; float:left" id="requestPOSTData"></textarea>
+                    <textarea readonly class="form-control preformatted" rows="10" style="width: 100%; float: left; display: none" id="originalRequestPOSTData"></textarea>
+                    <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize:both" id="originalRequestPOSTDataChanged"></div>
                 </div>
             </div>
+
             <div id="tabs-3">
                 <div class="" style="float: left; width: 100%; overflow: scroll;">
                     <div>
@@ -202,8 +182,7 @@
                         </h3>
                     </div>
                 </div>
-                <textarea class="form-control" rows="3" style="width: 100%"
-                    id="curlCommand"></textarea>
+                <textarea readonly class="form-control preformatted" style="width: 100%" id="curlCommand"></textarea>
             </div>
         </div>
     </div>
