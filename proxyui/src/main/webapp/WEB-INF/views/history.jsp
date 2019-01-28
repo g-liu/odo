@@ -317,6 +317,7 @@
     }
 
     function showChangedResponsePostFormattedAJAX() {
+        showChangedData(historyData.history.originalResponseHeaders, historyData.history.responseHeaders, "originalResponseHeaders", "originalResponseHeaderChange", "responseHeaders");
         showChangedData(historyData.history.formattedOriginalResponseData, historyData.history.formattedResponseData, "originalResponseRaw", "originalResponseChange", "responseRaw");
         $("#showChangedResponseButton").attr("class", "btn btn-primary");
         $("#showOriginalResponseButton, #showModifiedResponseButton").attr("class", "btn btn-default");
