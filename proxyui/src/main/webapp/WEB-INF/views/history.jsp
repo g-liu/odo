@@ -99,8 +99,8 @@
 
                 <h3>Headers</h3>
 
-                <textarea readonly class="form-control preformatted" rows="4" id="responseHeaders"></textarea>
-                <textarea readonly class="form-control preformatted" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
+                <textarea class="form-control preformatted" rows="4" id="responseHeaders"></textarea>
+                <textarea class="form-control preformatted" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
                 <div class="form-control diffarea" id="originalResponseHeaderChange"></div>
 
                 <h3>Data <span class="label label-info label-small" id="responseTypeLabel"></span> <span class="label label-info label-small" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
@@ -114,8 +114,8 @@
                     <button type="button" class="btn btn-default" id="downloadResponseDataButton" onClick="downloadResponseData()">Export Response</button>
                 </div>
 
-                <textarea readonly class="form-control preformatted" rows="20" id="responseRaw"></textarea>
-                <textarea readonly class="form-control preformatted" rows="20" style="display: none;" id="originalResponseRaw"></textarea>
+                <textarea class="form-control preformatted" rows="20" id="responseRaw"></textarea>
+                <textarea class="form-control preformatted" rows="20" style="display: none;" id="originalResponseRaw"></textarea>
                 <div class="form-control diffarea" id="originalResponseChange"></div>
             </div><!-- /#tabs-1 -->
 
@@ -130,34 +130,34 @@
                 <div class="d-inline-block btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" onClick="showPathTester()">Test Path</button>
                 </div>
-                <textarea readonly class="form-control preformatted" rows="1" id="requestQuery"></textarea>
-                <textarea readonly class="form-control preformatted" rows="1" style="display: none;" id="originalRequestQuery"></textarea>
+                <textarea class="form-control preformatted" rows="1" id="requestQuery"></textarea>
+                <textarea class="form-control preformatted" rows="1" style="display: none;" id="originalRequestQuery"></textarea>
                 <div class="form-control diffarea" id="originalRequestQueryChange"></div>
 
                 <h3>Parameters</h3>
-                <textarea readonly class="form-control preformatted" rows="3" id="requestParameters"></textarea>
-                <textarea readonly class="form-control preformatted" rows="3" style="display: none;" id="originalRequestParameters"></textarea>
+                <textarea class="form-control preformatted" rows="3" id="requestParameters"></textarea>
+                <textarea class="form-control preformatted" rows="3" style="display: none;" id="originalRequestParameters"></textarea>
                 <div class="form-control diffarea" id="originalRequestParametersChanged"></div>
 
                 <h3>Headers</h3>
-                <textarea readonly class="form-control preformatted" rows="3" id="requestHeaders"></textarea>
-                <textarea readonly class="form-control preformatted" rows="3" style="display: none;" id="originalRequestHeaders"></textarea>
+                <textarea class="form-control preformatted" rows="3" id="requestHeaders"></textarea>
+                <textarea class="form-control preformatted" rows="3" style="display: none;" id="originalRequestHeaders"></textarea>
                 <div class="form-control diffarea" id="originalRequestHeadersChanged"></div>
 
                 <h3>POST Data <span class="label label-info label-small" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
-                <textarea readonly class="form-control preformatted" rows="10" id="requestPOSTData"></textarea>
-                <textarea readonly class="form-control preformatted" rows="10" style="display: none" id="originalRequestPOSTData"></textarea>
+                <textarea class="form-control preformatted" rows="10" id="requestPOSTData"></textarea>
+                <textarea class="form-control preformatted" rows="10" style="display: none" id="originalRequestPOSTData"></textarea>
                 <div class="form-control diffarea" id="originalRequestPOSTDataChanged"></div>
             </div><!-- /#tabs-2 -->
 
             <div id="tabs-3">
                 <h3>cURL Command</h3>
-                <textarea readonly class="form-control preformatted" rows="29" id="curlCommand"></textarea>
+                <textarea class="form-control preformatted" rows="29" id="curlCommand"></textarea>
             </div><!-- /#tabs-3 -->
         </div>
     </div>
 
-<script>
+<script type="text/javascript">
     var clientUUID = '${clientUUID}';
 
     function openGridOptions() {
@@ -197,10 +197,6 @@
         window.open('<c:url value = '/scripts' />');
     }
 
-    function noenter() {
-        return !(window.event && window.event.keyCode == 13);
-    }
-
     function clearHistory() {
         $.ajax({
             type : "POST",
@@ -209,7 +205,7 @@
                 clientUUID : clientUUID,
                 _method : 'DELETE'
             }),
-            success : function(data) { //this is the data that comes back from the server (the array<array<object>>)
+            success : function(data) {
                 historyList.trigger("reloadGrid");
             },
             error : function(xhr, ajaxOptions, thrownError) {
@@ -221,13 +217,12 @@
     function uriFilter() {
         var filter = $("#searchFilter").val();
         jQuery("#historylist")
-                .jqGrid(
-                        'setGridParam',
-                        {
-                            url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}&source_uri[]='
-                                    + filter,
-                            page : 1
-                        }).trigger("reloadGrid");
+            .jqGrid(
+                'setGridParam',
+                {
+                    url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}&source_uri[]=' + filter,
+                    page : 1
+                }).trigger("reloadGrid");
     }
 
     function showItemsWithMessages() {
@@ -242,14 +237,13 @@
 
     function clearFilter() {
         jQuery("#historylist")
-                .jqGrid(
-                        'setGridParam',
-                        {
-                            url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}',
-                            page : 1
-                        }).trigger("reloadGrid");
+            .jqGrid(
+                'setGridParam',
+                {
+                    url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}',
+                    page : 1
+                }).trigger("reloadGrid");
     }
-
 
     var currentHistoryId = -1;
 
@@ -272,7 +266,7 @@
 
     var invalidRows = []
     function validFormatter(cellvalue, options, rowObject) {
-        if (cellvalue == false) {
+        if (!cellvalue) {
             invalidRows[invalidRows.length] = options.rowId;
         }
         return cellvalue;
@@ -280,7 +274,7 @@
 
     var originalResponseFlag = 0;
 
-    function showOriginalResponse(){
+    function showOriginalResponse() {
         originalResponseFlag = 1;
         $("#originalResponseHeaders").val(historyData.history.originalResponseHeaders);
         if(historyData.history.responseContentType == null ||
@@ -288,7 +282,7 @@
             historyData.history.responseData == "" || $.cookie("formatted") == "false"){
                 $("#originalResponseRaw").val(originalResponseRaw);
         } else {
-            if(historyData.history.formattedOriginalResponseData == "") {
+            if (historyData.history.formattedOriginalResponseData == "") {
                 showFormattedResponseData(false);
             } else {
                 $("#originalResponseRaw").val(historyData.history.formattedOriginalResponseData);
@@ -318,7 +312,7 @@
         $("#" + modifiedID).hide();
     }
 
-    function showChangedResponse(){
+    function showChangedResponse() {
         showFormattedResponseData(true);
     }
 
@@ -328,7 +322,7 @@
         $("#showOriginalResponseButton, #showModifiedResponseButton").attr("class", "btn btn-default");
     }
 
-    function showModifiedResponse(){
+    function showModifiedResponse() {
         originalResponseFlag = 0;
         $("#responseHeaders").val(historyData.history.responseHeaders);
         if(historyData.history.responseContentType == null ||
@@ -336,7 +330,7 @@
             historyData.history.responseData == "" || $.cookie("formatted") == "false") {
                 $("#responseRaw").val(responseRaw);
         } else {
-            if(historyData.history.formattedResponseData == "") {
+            if (historyData.history.formattedResponseData == "") {
                 showFormattedResponseData(false);
             } else {
                 $("#responseRaw").val(historyData.history.formattedResponseData);
@@ -356,8 +350,7 @@
     function showFormattedResponseData(forDiff) {
         $.ajax({
             type : "GET",
-            url : '<c:url value="/api/history/${profile_id}/"/>'
-                + currentHistoryId,
+            url : '<c:url value="/api/history/${profile_id}/"/>' + currentHistoryId,
             data : 'clientUUID=${clientUUID}&format=formattedAll',
             success : function(data) {
                 historyData = data;
@@ -433,8 +426,8 @@
         var requestType = historyData.history.requestType;
 
         var commandLine = "curl --insecure -X " + requestType;
-        for ( var x in headers) {
-            if(headers[x].toLowerCase().lastIndexOf("content-length",0) === 0) {
+        for (var x in headers) {
+            if(headers[x].toLowerCase().lastIndexOf("content-length", 0) === 0) {
                 continue;
             }
             commandLine += " -H '" + headers[x].replace("'", "\\u0027") + "'";
@@ -586,146 +579,143 @@
     var historyList = jQuery("#historylist");
 
     historyList
-            .jqGrid({
-                url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}',
-                autowidth : true,
-                pgbuttons : true, // disable page control like next, back button
-                pgtext : null,
-                datatype : "json",
-                page : "${page}",
-                rowNum: getNumberOfRows(),
-                altRows: true,
-                altclass: 'altRowClass',
-                colNames : [ 'ID', 'Created At', 'Method', 'Query',
-                        'Query Params', 'Code', 'Valid', 'Message', 'Modified' ],
-                colModel : [{
-                    name : 'id',
-                    index : 'id',
-                    width : 55,
-                    hidden : true,
-                    formatter : idFormatter
-                }, {
-                    name : 'createdAt',
-                    index : 'createdAt',
-                    width : 150,
-                    editable : false,
-                    align : 'center',
-                    sorttype : 'date',
-                    formatter : dateFormatter,
-                }, {
-                    name : 'requestType',
-                    index : 'requestType',
-                    width : 50,
-                    editable : false,
-                    align : 'center'
-                }, {
-                    name : 'originalRequestURL',
-                    index : 'originalRequestURL',
-                    width : 375,
-                    editable : false,
-                    cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal; word-break: break-all;"'
-                    }
-                }, {
-                    name : 'requestParams',
-                    index : 'requestParams',
-                    width : 300,
-                    editable : false,
-                    cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal; word-break: break-all; font-family: monospace;"'
-                    }
-                }, {
-                    name : 'responseCode',
-                    index : 'responseCode',
-                    width : 50,
-                    editable : false,
-                    align : 'center'
-                }, {
-                    name : 'valid',
-                    index : 'valid',
-                    width : 55,
-                    hidden : true,
-                    formatter : validFormatter
-                }, {
-                    name : 'validationMessage',
-                    index : 'validationMessage',
-                    width : 200,
-                    hidden : false,
-                    cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal;'
-                    }
-                }, {
-                    name : 'modified',
-                    index : 'modified',
-                    width : 50,
-                    editable: false,
-                    edittype: 'checkbox',
-                    align: 'center',
-                    editoptions: { value:"True:False" },
-                    formatter: modifiedFormatter,
-                    formatoptions: {disabled: false}
-                }, ],
-                jsonReader : {
-                    page : "page",
-                    total : "total",
-                    records : "records",
-                    root : 'history',
-                    repeatitems : false
-                },
-                gridComplete : function() {
-                    for (var i = 0; i < invalidRows.length; i++) {
-                        $("#" + invalidRows[i]).find("td").addClass(
-                            "ui-state-error");
-                    }
+        .jqGrid({
+            url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}',
+            autowidth : true,
+            pgbuttons : true, // disable page control like next, back button
+            pgtext : null,
+            datatype : "json",
+            page : "${page}",
+            rowNum: getNumberOfRows(),
+            altRows: true,
+            altclass: 'altRowClass',
+            colNames : [ 'ID', 'Created At', 'Method', 'Query',
+                    'Query Params', 'Code', 'Valid', 'Message', 'Modified' ],
+            colModel : [{
+                name : 'id',
+                index : 'id',
+                width : 55,
+                hidden : true,
+                formatter : idFormatter
+            }, {
+                name : 'createdAt',
+                index : 'createdAt',
+                width : 150,
+                editable : false,
+                align : 'center',
+                sorttype : 'date',
+                formatter : dateFormatter,
+            }, {
+                name : 'requestType',
+                index : 'requestType',
+                width : 50,
+                editable : false,
+                align : 'center'
+            }, {
+                name : 'originalRequestURL',
+                index : 'originalRequestURL',
+                width : 375,
+                editable : false,
+                cellattr: function (rowId, tv, rawObject, cm, rdata) {
+                    return 'style="white-space: normal; word-break: break-all;"'
+                }
+            }, {
+                name : 'requestParams',
+                index : 'requestParams',
+                width : 300,
+                editable : false,
+                cellattr: function (rowId, tv, rawObject, cm, rdata) {
+                    return 'style="white-space: normal; word-break: break-all; font-family: monospace;"'
+                }
+            }, {
+                name : 'responseCode',
+                index : 'responseCode',
+                width : 50,
+                editable : false,
+                align : 'center'
+            }, {
+                name : 'valid',
+                index : 'valid',
+                width : 55,
+                hidden : true,
+                formatter : validFormatter
+            }, {
+                name : 'validationMessage',
+                index : 'validationMessage',
+                width : 200,
+                hidden : false,
+                cellattr: function (rowId, tv, rawObject, cm, rdata) {
+                    return 'style="white-space: normal;'
+                }
+            }, {
+                name : 'modified',
+                index : 'modified',
+                width : 50,
+                editable: false,
+                edittype: 'checkbox',
+                align: 'center',
+                editoptions: { value:"True:False" },
+                formatter: modifiedFormatter,
+                formatoptions: {disabled: false}
+            }, ],
+            jsonReader : {
+                page : "page",
+                total : "total",
+                records : "records",
+                root : 'history',
+                repeatitems : false
+            },
+            gridComplete : function() {
+                for (var i = 0; i < invalidRows.length; i++) {
+                    $("#" + invalidRows[i]).find("td").addClass("ui-state-error");
+                }
 
-                    if("${historyID}" != -1 && !selectRowUsed) {
-                        jQuery("#historylist").setSelection("${historyID}", true);
-                        selectRowUsed = true;
-                    } else {
-                        jQuery("#historylist").setSelection(
-                        $("#historylist").getDataIDs()[0], true);
-                    }
-                },
-                loadComplete : function() {
-                    // this gets/sets a cookie for grid height and makes the grid resizable
-                    var initialGridSize = 300;
-                    if($.cookie("historyGridHeight") != null) {
-                        initialGridSize = $.cookie("historyGridHeight");
-                    }
+                if("${historyID}" != -1 && !selectRowUsed) {
+                    jQuery("#historylist").setSelection("${historyID}", true);
+                    selectRowUsed = true;
+                } else {
+                    jQuery("#historylist").setSelection($("#historylist").getDataIDs()[0], true);
+                }
+            },
+            loadComplete : function() {
+                // this gets/sets a cookie for grid height and makes the grid resizable
+                var initialGridSize = 300;
+                if($.cookie("historyGridHeight") != null) {
+                    initialGridSize = $.cookie("historyGridHeight");
+                }
 
-                    jQuery("#historylist").jqGrid('setGridHeight', initialGridSize);
+                jQuery("#historylist").jqGrid('setGridHeight', initialGridSize);
 
-                    // allow grid resize
-                    jQuery("#historylist").jqGrid('gridResize',
-                    {
-                        minHeight:300,
-                        maxHeight:1000,
-                        stop: function( event, ui ) {
-                            console.log(ui.size.height);
-                            $.cookie("historyGridHeight", ui.size.height, { expires: 10000, path: '/testproxy/history' });
-                        }
-                    });
-
-                    // set row height to be a little larger
-                    var grid = $("#historylist");
-                    var ids = grid.getDataIDs();
-                    for (var i = 0; i < ids.length; i++) {
-                        grid.setRowData ( ids[i], false, {height: 20+i*2} );
+                // allow grid resize
+                jQuery("#historylist").jqGrid('gridResize',
+                {
+                    minHeight:300,
+                    maxHeight:1000,
+                    stop: function( event, ui ) {
+                        console.log(ui.size.height);
+                        $.cookie("historyGridHeight", ui.size.height, { expires: 10000, path: '/testproxy/history' });
                     }
-                },
-                onSelectRow : function(id) {
-                    var data = jQuery("#historylist").jqGrid('getRowData',
-                        id);
-                    currentHistoryId = data.id;
-                    loadData(data.id);
-                },
-                rowList : [],
-                pager : '#historynavGrid',
-                sortname : 'id',
-                viewrecords : true,
-                sortorder : "desc",
-                caption : '<font size="5">History: ${profile_name}</font>'
-            });
+                });
+
+                // set row height to be a little larger
+                var grid = $("#historylist");
+                var ids = grid.getDataIDs();
+                for (var i = 0; i < ids.length; i++) {
+                    grid.setRowData(ids[i], false, {height: 20+i*2});
+                }
+            },
+            onSelectRow : function(id) {
+                var data = jQuery("#historylist").jqGrid('getRowData', id);
+                currentHistoryId = data.id;
+                loadData(data.id);
+            },
+            rowList : [],
+            pager : '#historynavGrid',
+            sortname : 'id',
+            viewrecords : true,
+            sortorder : "desc",
+            caption : '<font size="5">History: ${profile_name}</font>'
+        });
 
     historyList.jqGrid('navGrid', '#historynavGrid', {
         edit : false,
@@ -735,7 +725,7 @@
 
     function modifiedFormatter( cellvalue, options, rowObject ) {
         var checkedValue = 0;
-        if (cellvalue == true) {
+        if (cellvalue) {
             checkedValue = 1;
         }
         var newCellValue = '<input id="modified_' + rowObject.pathId + '"type="checkbox" offval="0" value="' + checkedValue + '"';
@@ -798,29 +788,29 @@
      * @return {string} HTML representation.
      */
     diff_prettyHtml = function(diffs) {
-      var html = [];
-      var pattern_amp = /&/g;
-      var pattern_lt = /</g;
-      var pattern_gt = />/g;
-      var pattern_para = /\n/g;
-      for (var x = 0; x < diffs.length; x++) {
-        var op = diffs[x][0];    // Operation (insert, delete, equal)
-        var data = diffs[x][1];  // Text of change.
-        var text = data.replace(pattern_amp, '&amp;').replace(pattern_lt, '&lt;')
-            .replace(pattern_gt, '&gt;').replace(pattern_para, '<br>');
-        switch (op) {
-          case DIFF_INSERT:
-            html[x] = '<ins style="background:#e6ffe6;">' + text + '</ins>';
-            break;
-          case DIFF_DELETE:
-            html[x] = '<del style="background:#ffe6e6;">' + text + '</del>';
-            break;
-          case DIFF_EQUAL:
-            html[x] = '<span>' + text + '</span>';
-            break;
+        var html = [];
+        var pattern_amp = /&/g;
+        var pattern_lt = /</g;
+        var pattern_gt = />/g;
+        var pattern_para = /\n/g;
+        for (var x = 0; x < diffs.length; x++) {
+            var op = diffs[x][0];    // Operation (insert, delete, equal)
+            var data = diffs[x][1];  // Text of change.
+            var text = data.replace(pattern_amp, '&amp;').replace(pattern_lt, '&lt;')
+                .replace(pattern_gt, '&gt;').replace(pattern_para, '<br>');
+            switch (op) {
+                case DIFF_INSERT:
+                    html[x] = '<ins style="background:#e6ffe6;">' + text + '</ins>';
+                    break;
+                case DIFF_DELETE:
+                    html[x] = '<del style="background:#ffe6e6;">' + text + '</del>';
+                    break;
+                case DIFF_EQUAL:
+                    html[x] = '<span>' + text + '</span>';
+                    break;
+            }
         }
-      }
-      return html.join('');
+        return html.join('');
     };
 </script>
 </body>
