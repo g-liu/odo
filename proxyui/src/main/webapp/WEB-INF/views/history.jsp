@@ -99,7 +99,7 @@
                 <div class="form-control" id = "originalResponseHeaderChange" style="width: 100%; height: 80px; overflow-y: scroll; resize: vertical; display: none;"></div>
                 <div style="clear: both"></div>
 
-                <h3>Data</h3>
+                <h3>Data <span class="label label-info" id="responseTypeLabel"></span> <span class="label label-info" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
 
                 <div class="d-inline-block btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" id="showRawResponseDataButton" onClick="showRawResponseData()">Raw</button>
@@ -109,10 +109,6 @@
                 <div class="d-inline-block btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" id="downloadResponseDataButton" onClick="downloadResponseData()">Export Response</button>
                 </div>
-
-                <span class="label label-info" id="responseTypeLabel"></span>
-
-                <span class="label label-info" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span>
 
                 <textarea readonly class="form-control preformatted" rows="20" style="width: 100%;" id="responseRaw"></textarea>
                 <textarea readonly class="form-control preformatted" rows="20" style="width: 100%; display: none;" id="originalResponseRaw"></textarea>
@@ -146,10 +142,7 @@
                 <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize: vertical;" id="originalRequestHeadersChanged"></div>
                 <div style="clear: both"></div>
 
-                <h3>POST Data</h3>
-                <h3 style="display: inline;">
-                    <span class="label label-info" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span>
-                </h3>
+                <h3>POST Data <span class="label label-info" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
                 <textarea readonly class="form-control preformatted" rows="10" style="width: 100%; float: left;" id="requestPOSTData"></textarea>
                 <textarea readonly class="form-control preformatted" rows="10" style="width: 100%; float: left; display: none" id="originalRequestPOSTData"></textarea>
                 <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize: vertical;" id="originalRequestPOSTDataChanged"></div>
@@ -157,7 +150,7 @@
 
             <div id="tabs-3">
                 <h3>cURL Command</h3>
-                <textarea readonly class="form-control preformatted" style="width: 100%" rows="3" id="curlCommand"></textarea>
+                <textarea readonly class="form-control preformatted" style="width: 100%" rows="5" id="curlCommand"></textarea>
             </div>
         </div>
     </div>
