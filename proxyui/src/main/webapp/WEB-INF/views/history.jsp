@@ -17,22 +17,27 @@
     </script>
 
      <style type="text/css">
-         ul, li {
-             list-style-type: none;
-         }
+         ul, li { list-style-type: none; }
 
-        .has-switch {height: 30px}
+        .has-switch { height: 30px; }
 
         .altRowClass { background: #EEEEEE; }
 
         textarea.preformatted { font-family: monospace; }
+
+        .diffarea
+        {
+            overflow-y: scroll;
+            resize: vertical;
+            display: none;
+        }
      </style>
 </head>
 <body>
 <%@ include file="pathtester_part.jsp" %>
 
 <!-- Hidden div for grid options -->
-<div id="gridOptionsDialog" style="display:none;">
+<div id="gridOptionsDialog" style="display: none;">
     <table>
     <tr><td>
         Number of Rows:
@@ -96,8 +101,7 @@
 
                 <textarea readonly class="form-control preformatted" rows="4" id="responseHeaders"></textarea>
                 <textarea readonly class="form-control preformatted" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
-                <div class="form-control" id = "originalResponseHeaderChange" style="width: 100%; height: 80px; overflow-y: scroll; resize: vertical; display: none;"></div>
-                <div style="clear: both"></div>
+                <div class="form-control diffarea" id="originalResponseHeaderChange"></div>
 
                 <h3>Data <span class="label label-info label-small" id="responseTypeLabel"></span> <span class="label label-info label-small" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
 
@@ -112,7 +116,7 @@
 
                 <textarea readonly class="form-control preformatted" rows="20" id="responseRaw"></textarea>
                 <textarea readonly class="form-control preformatted" rows="20" style="display: none;" id="originalResponseRaw"></textarea>
-                <div class="form-control" id = "originalResponseChange" style="width: 100%; height: 450px; overflow-y: scroll;  resize: vertical; display: none;"></div>
+                <div class="form-control diffarea" id="originalResponseChange"></div>
             </div><!-- /#tabs-1 -->
 
             <div id="tabs-2">
@@ -128,30 +132,27 @@
                 </div>
                 <textarea readonly class="form-control preformatted" rows="1" id="requestQuery"></textarea>
                 <textarea readonly class="form-control preformatted" rows="1" style="display: none;" id="originalRequestQuery"></textarea>
-                <div class="form-control" id = "originalRequestQueryChange" style="width: 100%; height: 40px; overflow-y: scroll; resize: vertical; display: none;"></div>
-                <div style="clear: both"></div>
+                <div class="form-control diffarea" id="originalRequestQueryChange"></div>
 
                 <h3>Parameters</h3>
                 <textarea readonly class="form-control preformatted" rows="3" id="requestParameters"></textarea>
                 <textarea readonly class="form-control preformatted" rows="3" style="display: none;" id="originalRequestParameters"></textarea>
-                <div class="form-control" style="width: 100%; float: left; display: none; overflow-y: scroll; resize: vertical;" id="originalRequestParametersChanged"></div>
-                <div style="clear: both"></div>
+                <div class="form-control diffarea" id="originalRequestParametersChanged"></div>
 
                 <h3>Headers</h3>
                 <textarea readonly class="form-control preformatted" rows="3" id="requestHeaders"></textarea>
                 <textarea readonly class="form-control preformatted" rows="3" style="display: none;" id="originalRequestHeaders"></textarea>
-                <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize: vertical;" id="originalRequestHeadersChanged"></div>
-                <div style="clear: both"></div>
+                <div class="form-control diffarea" id="originalRequestHeadersChanged"></div>
 
                 <h3>POST Data <span class="label label-info label-small" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
                 <textarea readonly class="form-control preformatted" rows="10" id="requestPOSTData"></textarea>
                 <textarea readonly class="form-control preformatted" rows="10" style="display: none" id="originalRequestPOSTData"></textarea>
-                <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize: vertical;" id="originalRequestPOSTDataChanged"></div>
+                <div class="form-control diffarea" id="originalRequestPOSTDataChanged"></div>
             </div><!-- /#tabs-2 -->
 
             <div id="tabs-3">
                 <h3>cURL Command</h3>
-                <textarea readonly class="form-control preformatted" rows="30" id="curlCommand"></textarea>
+                <textarea readonly class="form-control preformatted" rows="29" id="curlCommand"></textarea>
             </div><!-- /#tabs-3 -->
         </div>
     </div>
@@ -309,9 +310,11 @@
         dmp.diff_cleanupSemantic(d);
         var ds = diff_prettyHtml(d);
         //$("#" + changedID).html(ds.replace(/[^\x00-\x7F]/g, ""));
-        $("#" + changedID).html(ds);
+        $("#" + changedID)
+            .height($("#" + originalID).height())
+            .html(ds)
+            .show();
         $("#" + originalID).hide();
-        $("#" + changedID).show();
         $("#" + modifiedID).hide();
     }
 
@@ -386,8 +389,6 @@
         $("#originalRequestQueryChange").hide();
         $("#requestQuery").hide();
         $("#originalRequestParameters").show();
-        $("#originalRequestParameters").css("height" , "");
-        $("#originalRequestParameters").height($("#originalRequestParameters")[0].scrollHeight + "px");
         $("#originalRequestParametersChanged").hide();
         $("#requestParameters").hide();
         $("#originalRequestHeaders").show();
