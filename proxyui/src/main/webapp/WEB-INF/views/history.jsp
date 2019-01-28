@@ -99,7 +99,7 @@
                 <div class="form-control" id = "originalResponseHeaderChange" style="width: 100%; height: 80px; overflow-y: scroll; resize: vertical; display: none;"></div>
                 <div style="clear: both"></div>
 
-                <h3>Data <span class="label label-info" id="responseTypeLabel"></span> <span class="label label-info" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
+                <h3>Data <span class="label label-info label-small" id="responseTypeLabel"></span> <span class="label label-info label-small" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
 
                 <div class="d-inline-block btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" id="showRawResponseDataButton" onClick="showRawResponseData()">Raw</button>
@@ -143,7 +143,7 @@
                 <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize: vertical;" id="originalRequestHeadersChanged"></div>
                 <div style="clear: both"></div>
 
-                <h3>POST Data <span class="label label-info" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
+                <h3>POST Data <span class="label label-info label-small" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
                 <textarea readonly class="form-control preformatted" rows="10" id="requestPOSTData"></textarea>
                 <textarea readonly class="form-control preformatted" rows="10" style="display: none" id="originalRequestPOSTData"></textarea>
                 <div class="form-control" style="width: 100%; height: 80px; float: left; display: none; overflow-y: scroll; resize: vertical;" id="originalRequestPOSTDataChanged"></div>
