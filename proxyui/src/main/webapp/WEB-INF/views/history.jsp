@@ -94,8 +94,8 @@
 
                 <h3>Headers</h3>
 
-                <textarea readonly class="form-control preformatted" rows="5" id="responseHeaders"></textarea>
-                <textarea readonly class="form-control preformatted" rows="5" style="display: none;" id="originalResponseHeaders"></textarea>
+                <textarea readonly class="form-control preformatted" rows="4" id="responseHeaders"></textarea>
+                <textarea readonly class="form-control preformatted" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
                 <div class="form-control" id = "originalResponseHeaderChange" style="width: 100%; height: 80px; overflow-y: scroll; resize: vertical; display: none;"></div>
                 <div style="clear: both"></div>
 
@@ -151,7 +151,7 @@
 
             <div id="tabs-3">
                 <h3>cURL Command</h3>
-                <textarea readonly class="form-control preformatted" rows="5" id="curlCommand"></textarea>
+                <textarea readonly class="form-control preformatted" rows="30" id="curlCommand"></textarea>
             </div><!-- /#tabs-3 -->
         </div>
     </div>
