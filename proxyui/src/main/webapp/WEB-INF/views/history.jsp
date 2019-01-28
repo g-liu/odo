@@ -16,8 +16,10 @@
         $.jgrid.useJSON = true;
     </script>
 
-     <style type="text/css">
-         ul, li { list-style-type: none; }
+    <script type="text/javascript" src="<c:url value="/webjars/clipboard.js/2.0.0/clipboard.min.js"/>"></script>
+
+    <style type="text/css">
+        ul, li { list-style-type: none; }
 
         .has-switch { height: 30px; }
 
@@ -25,11 +27,16 @@
 
         textarea.preformatted { font-family: monospace; }
 
+        #historyGridDiv {
+            margin-bottom: 1em;
+        }
+
         .diffarea
         {
             overflow-y: scroll;
             resize: vertical;
             display: none;
+            font-family: monospace;
         }
      </style>
 </head>
@@ -70,92 +77,119 @@
         </div>
 
 
-       <ul class="nav navbar-nav navbar-right">
-         <li><a href="#" onclick='clearHistory()'>Clear History</a></li>
-         <li><a href="#" onclick='navigateScripts()'>Edit Scripts</a></li>
-         <li><a href="#" onclick='openGridOptions()'>Grid Options</a></li>
-       </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" onclick='clearHistory()'>Clear History</a></li>
+            <li><a href="#" onclick='navigateScripts()'>Edit Scripts</a></li>
+            <li><a href="#" onclick='openGridOptions()'>Grid Options</a></li>
+        </ul>
     </div>
 </nav>
+
 <div class="smaller-center" id="historyGridDiv">
     <table id="historylist"></table>
     <div id="historynavGrid"></div>
 </div>
-<br />
-    <div class="smaller-center" id="historyContentDiv">
-        <div id="tabs">
-            <ul>
-                <li><a href="#tabs-1">Response</a></li>
-                <li><a href="#tabs-2">Request</a></li>
-                <li><a href="#tabs-3">Other</a></li>
-            </ul>
 
-            <div id="tabs-1">
-                <div class="btn-group btn-group-sm pull-right" id="responseButtons">
-                    <button type="button" class="btn btn-default" id="showModifiedResponseButton" onClick="showModifiedResponse()">Modified</button>
-                    <button type="button" class="btn btn-default" id="showOriginalResponseButton" onClick="showOriginalResponse()">Original</button>
-                    <button type="button" class="btn btn-default" id="showChangedResponseButton" onClick="showChangedResponse()">View Diff</button>
+<div class="smaller-center" id="historyContentDiv">
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Response</a></li>
+            <li><a href="#tabs-2">Request</a></li>
+            <li><a href="#tabs-3">Other</a></li>
+        </ul>
+
+        <div id="tabs-1">
+            <div class="btn-group btn-group-sm pull-right" id="responseButtons">
+                <button type="button" class="btn btn-default" id="showModifiedResponseButton" onClick="showModifiedResponse()">Modified</button>
+                <button type="button" class="btn btn-default" id="showOriginalResponseButton" onClick="showOriginalResponse()">Original</button>
+                <button type="button" class="btn btn-default" id="showChangedResponseButton" onClick="showChangedResponse()">View Diff</button>
+            </div>
+
+            <h3 style="display: inline-block">Headers</h3>
+            <div class="btn-group btn-group-sm">
+                <button type="button" id="copyResponseHeaders" class="btn btn-default copy-to-clipboard">Copy</button>
+            </div>
+            <textarea class="form-control preformatted" data-copy-trigger="copyResponseHeaders" rows="4" id="responseHeaders"></textarea>
+            <textarea class="form-control preformatted" data-copy-trigger="copyResponseHeaders" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
+            <div class="form-control diffarea" id="originalResponseHeaderChange" data-copy-trigger="copyResponseHeaders"></div>
+
+            <h3>Data <span class="label label-info label-small" id="responseTypeLabel"></span> <span class="label label-info label-small" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
+
+            <div class="btn-toolbar">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" id="copyResponseData" class="btn btn-default copy-to-clipboard">Copy</button>
                 </div>
 
-                <h3>Headers</h3>
-
-                <textarea class="form-control preformatted" rows="4" id="responseHeaders"></textarea>
-                <textarea class="form-control preformatted" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
-                <div class="form-control diffarea" id="originalResponseHeaderChange"></div>
-
-                <h3>Data <span class="label label-info label-small" id="responseTypeLabel"></span> <span class="label label-info label-small" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
-
-                <div class="d-inline-block btn-group btn-group-sm">
+                <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" id="showRawResponseDataButton" onClick="showRawResponseData()">Raw</button>
                     <button type="button" class="btn btn-default" id="showRawFormattedDataButton" onClick="showFormattedResponseData(false)">Formatted</button>
                 </div>
 
-                <div class="d-inline-block btn-group btn-group-sm">
+                <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" id="downloadResponseDataButton" onClick="downloadResponseData()">Export Response</button>
                 </div>
+            </div>
 
-                <textarea class="form-control preformatted" rows="20" id="responseRaw"></textarea>
-                <textarea class="form-control preformatted" rows="20" style="display: none;" id="originalResponseRaw"></textarea>
-                <div class="form-control diffarea" id="originalResponseChange"></div>
-            </div><!-- /#tabs-1 -->
+            <textarea class="form-control preformatted" rows="20" data-copy-trigger="copyResponseData" id="responseRaw"></textarea>
+            <textarea class="form-control preformatted" rows="20" data-copy-trigger="copyResponseData" style="display: none;" id="originalResponseRaw"></textarea>
+            <div class="form-control diffarea" data-copy-trigger="copyResponseData" id="originalResponseChange"></div>
+        </div><!-- /#tabs-1 -->
 
-            <div id="tabs-2">
-                <div class="btn-group btn-group-sm pull-right" id="requestButtons">
-                    <button type="button" class="btn btn-default" id="showModifiedRequestButton" onClick="showModifiedRequestData()">Modified</button>
-                    <button type="button" class="btn btn-default" id="showOriginalButton" onClick="showOriginalRequestData()">Original</button>
-                    <button type="button" class="btn btn-default" id="showChangedButton" onClick="showChangedRequestData()">View Diff</button>
+        <div id="tabs-2">
+            <div class="btn-group btn-group-sm pull-right" id="requestButtons">
+                <button type="button" class="btn btn-default" id="showModifiedRequestButton" onClick="showModifiedRequestData()">Modified</button>
+                <button type="button" class="btn btn-default" id="showOriginalButton" onClick="showOriginalRequestData()">Original</button>
+                <button type="button" class="btn btn-default" id="showChangedButton" onClick="showChangedRequestData()">View Diff</button>
+            </div>
+
+            <h3>URL</h3>
+            <div class="btn-toolbar">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" id="copyRequestQuery" class="btn btn-default copy-to-clipboard">Copy</button>
                 </div>
-
-                <h3>URL</h3>
-                <div class="d-inline-block btn-group btn-group-sm">
+                <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" onClick="showPathTester()">Test Path</button>
                 </div>
-                <textarea class="form-control preformatted" rows="1" id="requestQuery"></textarea>
-                <textarea class="form-control preformatted" rows="1" style="display: none;" id="originalRequestQuery"></textarea>
-                <div class="form-control diffarea" id="originalRequestQueryChange"></div>
+            </div>
+            <textarea class="form-control preformatted" rows="1" data-copy-trigger="copyRequestQuery" id="requestQuery"></textarea>
+            <textarea class="form-control preformatted" rows="1" data-copy-trigger="copyRequestQuery" style="display: none;" id="originalRequestQuery"></textarea>
+            <div class="form-control diffarea" data-copy-trigger="copyRequestQuery" id="originalRequestQueryChange"></div>
 
-                <h3>Parameters</h3>
-                <textarea class="form-control preformatted" rows="3" id="requestParameters"></textarea>
-                <textarea class="form-control preformatted" rows="3" style="display: none;" id="originalRequestParameters"></textarea>
-                <div class="form-control diffarea" id="originalRequestParametersChanged"></div>
+            <h3 style="display: inline-block;">Parameters</h3>
+            <div class="btn-group btn-group-sm">
+                <button type="button" id="copyRequestParameters" class="btn btn-default copy-to-clipboard">Copy</button>
+            </div>
+            <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestParameters" id="requestParameters"></textarea>
+            <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestParameters" style="display: none;" id="originalRequestParameters"></textarea>
+            <div class="form-control diffarea" data-copy-trigger="copyRequestParameters" id="originalRequestParametersChanged"></div>
 
-                <h3>Headers</h3>
-                <textarea class="form-control preformatted" rows="3" id="requestHeaders"></textarea>
-                <textarea class="form-control preformatted" rows="3" style="display: none;" id="originalRequestHeaders"></textarea>
-                <div class="form-control diffarea" id="originalRequestHeadersChanged"></div>
+            <h3 style="display: inline-block;">Headers</h3>
+            <div class="btn-group btn-group-sm">
+                <button type="button" id="copyRequestHeaders" class="btn btn-default copy-to-clipboard">Copy</button>
+            </div>
+            <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestHeaders" id="requestHeaders"></textarea>
+            <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestHeaders" style="display: none;" id="originalRequestHeaders"></textarea>
+            <div class="form-control diffarea" data-copy-trigger="copyRequestHeaders" id="originalRequestHeadersChanged"></div>
 
-                <h3>POST Data <span class="label label-info label-small" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
-                <textarea class="form-control preformatted" rows="10" id="requestPOSTData"></textarea>
-                <textarea class="form-control preformatted" rows="10" style="display: none" id="originalRequestPOSTData"></textarea>
-                <div class="form-control diffarea" id="originalRequestPOSTDataChanged"></div>
-            </div><!-- /#tabs-2 -->
+            <h3 style="display: inline-block;">POST Data</h3>
+            <div class="btn-group btn-group-sm">
+                <button type="button" id="copyPOSTData" class="btn btn-default copy-to-clipboard">Copy</button>
+            </div>
+            <span class="label label-info" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span>
+            <textarea class="form-control preformatted" data-copy-trigger="copyPOSTData" rows="10" id="requestPOSTData"></textarea>
+            <textarea class="form-control preformatted" data-copy-trigger="copyPOSTData" rows="10" style="display: none" id="originalRequestPOSTData"></textarea>
+            <div class="form-control diffarea" data-copy-trigger="copyPOSTData" id="originalRequestPOSTDataChanged"></div>
+        </div><!-- /#tabs-2 -->
 
-            <div id="tabs-3">
-                <h3>cURL Command</h3>
-                <textarea class="form-control preformatted" rows="29" id="curlCommand"></textarea>
-            </div><!-- /#tabs-3 -->
-        </div>
+        <div id="tabs-3">
+            <h3>cURL Command</h3>
+            <div class="btn-group btn-group-sm">
+                <button type="button" id="copyCURLCommand" class="btn btn-default copy-to-clipboard">Copy</button>
+            </div>
+            <textarea class="form-control preformatted" rows="29" data-copy-trigger="copyCURLCommand" id="curlCommand"></textarea>
+        </div><!-- /#tabs-3 -->
     </div>
+</div>
 
 <script type="text/javascript">
     var clientUUID = '${clientUUID}';
@@ -303,13 +337,14 @@
         var d = dmp.diff_main(originalData, changedData);
         dmp.diff_cleanupSemantic(d);
         var ds = diff_prettyHtml(d);
+        var patchdiff = dmp.patch_toText(dmp.patch_make(originalData, changedData));
         //$("#" + changedID).html(ds.replace(/[^\x00-\x7F]/g, ""));
         $("#" + changedID)
             .height($("#" + originalID).height())
+            .attr("data-copy-content", patchdiff)
             .html(ds)
             .show();
-        $("#" + originalID).hide();
-        $("#" + modifiedID).hide();
+        $("#" + originalID + ", #" + modifiedID).hide();
     }
 
     function showChangedResponse() {
@@ -355,7 +390,7 @@
             data : 'clientUUID=${clientUUID}&format=formattedAll',
             success : function(data) {
                 historyData = data;
-                if (forDiff == true) {
+                if (forDiff) {
                     showChangedResponsePostFormattedAJAX();
                 } else {
                     $("#responseRaw").val(data.history.formattedResponseData);
@@ -573,6 +608,35 @@
         // bind window resize to fix grid width
         $(window).bind('resize', function() {
             $("#historylist").setGridWidth($("#historyGridDiv").width());
+        });
+
+        var clipboard = new ClipboardJS(".copy-to-clipboard", {
+            text: function(trigger) {
+                var $target = $("[data-copy-trigger=\"" + trigger.id + "\"]").filter(function(index) {
+                    return $(this).is(":visible");
+                }).first();
+
+                if ($target.is('textarea')) {
+                    return $target.val();
+                } else if ($target.attr('data-copy-content')) {
+                    return decodeURIComponent($target.attr('data-copy-content'));
+                } else {
+                    return $target.text();
+                }
+            }
+        });
+
+        clipboard.on('success', function(e) {
+            console.info('Action:', e.action);
+            console.info('Text:', e.text);
+            console.info('Trigger:', e.trigger);
+
+            // $(e.trigger).tooltip({ content: "Copied!" }).tooltip('open');
+        });
+
+        clipboard.on('error', function(e) {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
         });
     });
 

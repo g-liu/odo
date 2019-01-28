@@ -251,7 +251,7 @@
     <body>
         <!-- Hidden div for configuration file upload -->
         <div id="configurationUploadDialog" style="display:none;">
-            <form id="configurationUploadForm" action="<c:url value="/api/backup"/>" method="POST">
+            <form id="configurationUploadForm" action="<c:url value="/api/backup"/>" method="post">
                 <input id="configurationUploadFile" type="file" name="fileData" />
                 <button id="configurationUploadFileButton" type="submit" style="display: none;"></button>
             </form>
