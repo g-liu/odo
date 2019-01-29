@@ -16,8 +16,7 @@
         $.jgrid.useJSON = true;
     </script>
 
-    <!-- <script type="text/javascript" src="<c:url value="/webjars/clipboard.js/2.0.0/clipboard.min.js"/>"></script> -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+    <script type="text/javascript" src="<c:url value="/webjars/clipboard.js/2.0.0/clipboard.min.js"/>"></script>
 
     <style type="text/css">
         ul, li { list-style-type: none; }
