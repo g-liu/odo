@@ -1,15 +1,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page session="false" %>
+<!DOCTYPE html>
 <html>
 <head>
     <title>History: ${profile_name}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <%@ include file="/resources/js/webjars.include" %>
     <script src="<c:url value="/resources/js/diff_match_patch_uncompressed.js" />"></script>
-    <link rel="stylesheet" type="text/css" media="screen"
-             href="<c:url value="/resources/css/odo.css"/>" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script type="text/javascript">
         $.jgrid.no_legacy_api = true;
@@ -627,11 +627,17 @@
         });
 
         clipboard.on('success', function(e) {
-            console.info('Action:', e.action);
-            console.info('Text:', e.text);
-            console.info('Trigger:', e.trigger);
-
-            // $(e.trigger).tooltip({ content: "Copied!" }).tooltip('open');
+            $(".copy-to-clipboard")
+                .tooltip({
+                    "content": "Copied!",
+                    "items": "#" + e.trigger.id,
+                    open: function(e) {
+                        setTimeout(function() {
+                            $(e.target).tooltip("disable").tooltip("close");
+                        }, 1000);
+                    }
+                })
+                .tooltip("open");
         });
 
         clipboard.on('error', function(e) {
