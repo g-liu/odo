@@ -35,6 +35,9 @@
 
 <link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/webjars/select2/3.5.4/select2.css"/>" />
 
+<!----------- mousetrap ------------>
+<script src="<c:url value="/webjars/mousetrap/1.6.0/mousetrap.min.js" />" type="text/javascript"></script>
+
 <!--------- user resources --------->
 
 <link rel="stylesheet" type="text/css" media="screen" href="<c:url value="/resources/css/odo.css"/>" />
