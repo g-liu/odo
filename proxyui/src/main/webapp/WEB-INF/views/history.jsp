@@ -61,7 +61,7 @@
         </div>
 
         <div class="form-group navbar-form navbar-left">
-            <input type="text" class="form-control" placeholder="Search" id="searchFilter">
+            <input type="text" class="form-control" placeholder="Search (f)" id="searchFilter">
             <button class="btn btn-default" type="button" onclick='uriFilter()'>Apply Filter</button>
             <button class="btn btn-default" type="button" onclick='clearFilter()'>Clear Filters</button>
 
@@ -93,9 +93,9 @@
 <div id="historyContentDiv">
     <div id="tabs">
         <ul>
-            <li><a href="#tabs-1">Response</a></li>
-            <li><a href="#tabs-2">Request</a></li>
-            <li><a href="#tabs-3">Other</a></li>
+            <li><a href="#tabs-1">Response <kbd>1</kbd></a></li>
+            <li><a href="#tabs-2">Request <kbd>2</kbd></a></li>
+            <li><a href="#tabs-3">Other <kbd>3</kbd></a></li>
         </ul>
 
         <div id="tabs-1">
@@ -649,6 +649,21 @@
             });
 
         var selectRowUsed = false;
+
+        Mousetrap.bind('1', function() {
+            $("[href=\"#tabs-1\"]").click();
+        });
+        Mousetrap.bind('2', function() {
+            $("[href=\"#tabs-2\"]").click();
+        });
+        Mousetrap.bind('3', function() {
+            $("[href=\"#tabs-3\"]").click();
+        });
+        Mousetrap.bind('f', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            $("#searchFilter").focus();
+        });
 
         $("#historylist")
             .jqGrid({

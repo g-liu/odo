@@ -530,6 +530,16 @@
                 $("#responseOverrideSelect").select2({dropdownAutoWidth : true});
                 $("#requestOverrideSelect").select2({dropdownAutoWidth : true});
 
+                Mousetrap.bind('1', function() {
+                    $("[href=\"#tabs-1\"]").click();
+                });
+                Mousetrap.bind('2', function() {
+                    $("[href=\"#tabs-2\"]").click();
+                });
+                Mousetrap.bind('3', function() {
+                    $("[href=\"#tabs-3\"]").click();
+                });
+
                 var serverList = jQuery("#serverlist");
                 var initServerWidth = 0;
                 serverList.jqGrid({
@@ -1944,9 +1954,9 @@
                     </div>
                     <div id="tabs">
                         <ul>
-                            <li><a href="#tabs-1">Response</a></li>
-                            <li><a href="#tabs-2">Request</a></li>
-                            <li><a href="#tabs-3">Configuration</a></li>
+                            <li><a href="#tabs-1">Response <kbd>1</kbd></a></li>
+                            <li><a href="#tabs-2">Request <kbd>2</kbd></a></li>
+                            <li><a href="#tabs-3">Configuration <kbd>3</kbd></a></li>
                         </ul>
 
                         <div id="tabs-1" >
