@@ -16,7 +16,8 @@
         $.jgrid.useJSON = true;
     </script>
 
-    <script type="text/javascript" src="<c:url value="/webjars/clipboard.js/2.0.0/clipboard.min.js"/>"></script>
+    <!-- <script type="text/javascript" src="<c:url value="/webjars/clipboard.js/2.0.0/clipboard.min.js"/>"></script> -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
 
     <style type="text/css">
         ul, li { list-style-type: none; }
@@ -610,7 +611,7 @@
             $("#historylist").setGridWidth($("#historyGridDiv").width());
         });
 
-        var clipboard = new ClipboardJS(".copy-to-clipboard", {
+        new ClipboardJS(".copy-to-clipboard", {
             text: function(trigger) {
                 var $target = $("[data-copy-trigger=\"" + trigger.id + "\"]").filter(function(index) {
                     return $(this).is(":visible");
@@ -624,26 +625,30 @@
                     return $target.text();
                 }
             }
-        });
-
-        clipboard.on('success', function(e) {
-            $(".copy-to-clipboard")
+        }).on('success', function(e) {
+            $(e.trigger)
                 .tooltip({
-                    "content": "Copied!",
-                    "items": "#" + e.trigger.id,
-                    open: function(e) {
-                        setTimeout(function() {
-                            $(e.target).tooltip("disable").tooltip("close");
-                        }, 1000);
-                    }
+                    "title": "Copied!",
+                    "placement": "right",
+                    "trigger": "manual"
                 })
-                .tooltip("open");
+                .tooltip("show");
+        }).on('error', function(e) {
+            $(e.trigger)
+                .tooltip({
+                    "title": "Cannot copy that much text!",
+                    "placement": "right",
+                    "trigger": "manual"
+                })
+                .tooltip("show");
         });
 
-        clipboard.on('error', function(e) {
-            console.error('Action:', e.action);
-            console.error('Trigger:', e.trigger);
-        });
+        $(".copy-to-clipboard")
+            .on("shown.bs.tooltip", function(event) {
+                setTimeout(function() {
+                    $(event.target).tooltip("hide");
+                }, 1500);
+            });
     });
 
     var selectRowUsed = false;
