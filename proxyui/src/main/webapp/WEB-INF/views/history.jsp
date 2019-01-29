@@ -99,10 +99,10 @@
         </ul>
 
         <div id="tabs-1">
-            <div class="btn-group btn-group-sm pull-right" id="responseButtons">
-                <button type="button" class="btn btn-default" id="showModifiedResponseButton" onClick="showModifiedResponse()">Modified</button>
-                <button type="button" class="btn btn-default" id="showOriginalResponseButton" onClick="showOriginalResponse()">Original</button>
-                <button type="button" class="btn btn-default" id="showChangedResponseButton" onClick="showChangedResponse()">View Diff</button>
+            <div class="btn-group btn-group-sm pull-right history-diff-tools" id="responseButtons">
+                <button type="button" class="btn btn-default history-modified" id="showModifiedResponseButton" onClick="showModifiedResponse()">Modified <kbd>m</kbd></button>
+                <button type="button" class="btn btn-default history-original" id="showOriginalResponseButton" onClick="showOriginalResponse()">Original <kbd>o</kbd></button>
+                <button type="button" class="btn btn-default history-diff" id="showChangedResponseButton" onClick="showChangedResponse()">View Diff <kbd>d</kbd></button>
             </div>
 
             <h3 style="display: inline-block">Headers</h3>
@@ -136,10 +136,10 @@
         </div><!-- /#tabs-1 -->
 
         <div id="tabs-2">
-            <div class="btn-group btn-group-sm pull-right" id="requestButtons">
-                <button type="button" class="btn btn-default" id="showModifiedRequestButton" onClick="showModifiedRequestData()">Modified</button>
-                <button type="button" class="btn btn-default" id="showOriginalButton" onClick="showOriginalRequestData()">Original</button>
-                <button type="button" class="btn btn-default" id="showChangedButton" onClick="showChangedRequestData()">View Diff</button>
+            <div class="btn-group btn-group-sm pull-right history-diff-tools" id="requestButtons">
+                <button type="button" class="btn btn-default history-modified" id="showModifiedRequestButton" onClick="showModifiedRequestData()">Modified <kbd>m</kbd></button>
+                <button type="button" class="btn btn-default history-original" id="showOriginalButton" onClick="showOriginalRequestData()">Original <kbd>o</kbd></button>
+                <button type="button" class="btn btn-default history-diff" id="showChangedButton" onClick="showChangedRequestData()">View Diff <kbd>d</kbd></button>
             </div>
 
             <h3>URL</h3>
@@ -219,12 +219,7 @@
     }
 
     function getNumberOfRows() {
-        var numRows = 10;
-        if ($.cookie("historyGridRows") != null) {
-            numRows = $.cookie("historyGridRows");
-        }
-
-        return numRows;
+        return $.cookie("historyGridRows") || 10;
     }
 
     function navigateScripts() {
@@ -328,8 +323,8 @@
         $("#originalResponseChange").hide();
         $("#responseRaw").hide();
         $("#responseHeaders").hide();
-        $("#showChangedResponseButton, #showModifiedResponseButton").attr("class", "btn btn-default");
-        $("#showOriginalResponseButton").attr("class", "btn btn-primary");
+        $("#showChangedResponseButton, #showModifiedResponseButton").removeClass("btn-primary").addClass("btn-default");
+        $("#showOriginalResponseButton").removeClass("btn-default").addClass("btn-primary");
     }
 
     var dmp = new diff_match_patch();
@@ -354,8 +349,8 @@
     function showChangedResponsePostFormattedAJAX() {
         showChangedData(historyData.history.originalResponseHeaders, historyData.history.responseHeaders, "originalResponseHeaders", "originalResponseHeaderChange", "responseHeaders");
         showChangedData(historyData.history.formattedOriginalResponseData, historyData.history.formattedResponseData, "originalResponseRaw", "originalResponseChange", "responseRaw");
-        $("#showChangedResponseButton").attr("class", "btn btn-primary");
-        $("#showOriginalResponseButton, #showModifiedResponseButton").attr("class", "btn btn-default");
+        $("#showChangedResponseButton").removeClass("btn-default").addClass("btn-primary");
+        $("#showOriginalResponseButton, #showModifiedResponseButton").removeClass("btn-primary").addClass("btn-default");
     }
 
     function showModifiedResponse() {
@@ -378,8 +373,8 @@
         $("#originalResponseChange").hide();
         $("#originalResponseRaw").hide();
         $("#originalResponseHeaders").hide();
-        $("#showOriginalResponseButton, #showChangedResponseButton").attr("class", "btn btn-default");
-        $("#showModifiedResponseButton").attr("class", "btn btn-primary");
+        $("#showOriginalResponseButton, #showChangedResponseButton").removeClass("btn-primary").addClass("btn-default");
+        $("#showModifiedResponseButton").removeClass("btn-default").addClass("btn-primary");
     }
 
     var responseRaw, originalResponseRaw;
@@ -396,8 +391,8 @@
                     $("#responseRaw").val(data.history.formattedResponseData);
                     $("#originalResponseRaw").val(data.history.formattedOriginalResponseData);
                     $.cookie("formatted", "true");
-                    $("#showRawFormattedDataButton").attr("class", "btn btn-primary");
-                    $("#showRawResponseDataButton").attr("class", "btn btn-default");
+                    $("#showRawFormattedDataButton").removeClass("btn-default").addClass("btn-primary");
+                    $("#showRawResponseDataButton").removeClass("btn-primary").addClass("btn-default");
                 }
             }
         });
@@ -409,8 +404,8 @@
         $("#responseRaw").val(responseRaw);
         $("#originalResponseRaw").val(originalResponseRaw);
         $.cookie("formatted", "false");
-        $("#showRawResponseDataButton").attr("class", "btn btn-primary");
-        $("#showRawFormattedDataButton").attr("class", "btn btn-default");
+        $("#showRawResponseDataButton").removeClass("btn-default").addClass("btn-primary");
+        $("#showRawFormattedDataButton").removeClass("btn-primary").addClass("btn-default");
     }
 
     function showOriginalRequestData(){
@@ -426,8 +421,8 @@
         $("#originalRequestPOSTData").show();
         $("#originalRequestPOSTDataChanged").hide();
         $("#requestPOSTData").hide();
-        $("#showOriginalButton").attr("class", "btn btn-primary");
-        $("#showChangedButton, #showModifiedRequestButton").attr("class", "btn btn-default");
+        $("#showOriginalButton").removeClass("btn-default").addClass("btn-primary");
+        $("#showChangedButton, #showModifiedRequestButton").removeClass("btn-primary").addClass("btn-default");
     }
 
     function showChangedRequestData(){
@@ -435,8 +430,8 @@
         showChangedData(historyData.history.originalRequestParams, historyData.history.requestParams, "originalRequestParameters", "originalRequestParametersChanged", "requestParameters");
         showChangedData(historyData.history.originalRequestHeaders, historyData.history.requestHeaders, "originalRequestHeaders", "originalRequestHeadersChanged", "requestHeaders");
         showChangedData(historyData.history.originalRequestPostData, historyData.history.requestPostData, "originalRequestPOSTData", "originalRequestPOSTDataChanged", "requestPOSTData");
-        $("#showChangedButton").attr("class", "btn btn-primary");
-        $("#showOriginalButton, #showModifiedRequestButton").attr("class", "btn btn-default");
+        $("#showChangedButton").removeClass("btn-default").addClass("btn-primary");
+        $("#showOriginalButton, #showModifiedRequestButton").removeClass("btn-primary").addClass("btn-default");
     }
 
     function showModifiedRequestData(){
@@ -452,8 +447,8 @@
         $("#originalRequestPOSTData").hide();
         $("#originalRequestPOSTDataChanged").hide();
         $("#requestPOSTData").show();
-        $("#showOriginalButton, #showChangedButton").attr("class", "btn btn-default");
-        $("#showModifiedRequestButton").attr("class", "btn btn-primary");
+        $("#showOriginalButton, #showChangedButton").removeClass("btn-primary").addClass("btn-default");
+        $("#showModifiedRequestButton").removeClass("btn-default").addClass("btn-primary");
     }
 
 
@@ -551,7 +546,7 @@
                     $("#originalRequestPOSTData").val(data.history.originalRequestPostData);
                     $("#responseButtons").show();
                     $("#requestButtons").show();
-                    $("#showModifiedResponseButton, #showModifiedRequestButton").attr("class", "btn btn-primary");
+                    $("#showModifiedResponseButton, #showModifiedRequestButton").removeClass("btn-default").addClass("btn-primary");
                 } else {
                     // set the query back to the original query data
                     $("#requestQuery").val(data.history.originalRequestURL);
@@ -650,6 +645,8 @@
 
         var selectRowUsed = false;
 
+        /* Keyboard shortcuts configuration */
+        // Tabs: response/request/other navigation
         Mousetrap.bind('1', function() {
             $("[href=\"#tabs-1\"]").click();
         });
@@ -659,10 +656,27 @@
         Mousetrap.bind('3', function() {
             $("[href=\"#tabs-3\"]").click();
         });
+        // Filter
         Mousetrap.bind('f', function(event) {
             event.preventDefault();
             event.stopPropagation();
             $("#searchFilter").focus();
+        });
+        Mousetrap.bind('esc', function() {
+            $(":focus").blur();
+        });
+        // View data modified/original/diff
+        Mousetrap.bind('m', function() {
+            var selectedTabId = $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
+            $(selectedTabId + " .history-diff-tools:visible .history-modified").click();
+        });
+        Mousetrap.bind('o', function() {
+            var selectedTabId = $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
+            $(selectedTabId + " .history-diff-tools:visible .history-original").click();
+        });
+        Mousetrap.bind('d', function() {
+            var selectedTabId = $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
+            $(selectedTabId + " .history-diff-tools:visible .history-diff").click();
         });
 
         $("#historylist")
@@ -677,17 +691,16 @@
                 altRows: true,
                 altclass: 'altRowClass',
                 colNames : [ 'ID', 'Created At', 'Method', 'Query',
-                        'Query Params', 'Code', 'Valid', 'Message', 'Modified' ],
+                        'Query Params', 'Code', 'Valid', 'Message', 'Modified?' ],
                 colModel : [{
                     name : 'id',
                     index : 'id',
-                    width : 55,
                     hidden : true,
                     formatter : idFormatter
                 }, {
                     name : 'createdAt',
                     index : 'createdAt',
-                    width : 150,
+                    width : 125,
                     editable : false,
                     align : 'center',
                     sorttype : 'date',
