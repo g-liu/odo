@@ -887,7 +887,7 @@
     function modifiedFormatter(cellvalue, options, rowObject) {
         return $('<div>').append($('<span>')
                 .addClass("glyphicon " + (cellvalue ? "glyphicon-ok text-success" : "glyphicon-remove"))
-                .attr("style", cellvalue ? "font-size: 125%;" : "display: none;"))
+                .attr("style", cellvalue ? "" : "opacity: 0.15;"))
             .append($('<span>')
                 .addClass('copy-only')
                 .text(cellvalue ? 'Yes' : 'No'))
