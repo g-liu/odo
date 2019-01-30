@@ -741,6 +741,7 @@
                 datatype : "json",
                 page : "${page}",
                 toppager: true,
+                gridview: true,
                 rowNum: getNumberOfRows(),
                 altRows: true,
                 altclass: 'altRowClass',
@@ -751,50 +752,57 @@
                         name : 'id',
                         index : 'id',
                         hidden : true,
-                        formatter : idFormatter
+                        formatter : idFormatter,
+                        sortable: false
                     }, {
                         name : 'createdAt',
                         index : 'createdAt',
                         width : 125,
                         editable : false,
+                        sortable: false,
                         align : 'center',
-                        sorttype : 'date',
                         formatter : dateFormatter,
                     }, {
                         name : 'requestType',
                         index : 'requestType',
-                        width : 50,
+                        width : 60,
                         editable : false,
+                        sortable: false,
                         align : 'center'
                     }, {
                         name : 'originalRequestURL',
                         index : 'originalRequestURL',
                         width : 375,
                         editable : false,
-                        classes: 'break-all',
+                        sortable: false,
+                        classes: 'break-all'
                     }, {
                         name : 'requestParams',
                         index : 'requestParams',
                         width : 300,
                         editable : false,
-                        classes: 'break-all preformatted',
+                        sortable: false,
+                        classes: 'break-all preformatted'
                     }, {
                         name : 'responseCode',
                         index : 'responseCode',
                         width : 50,
                         editable : false,
+                        sortable: false,
                         align : 'center'
                     }, {
                         name : 'valid',
                         index : 'valid',
                         width : 55,
                         hidden : true,
+                        sortable: false,
                         formatter : validFormatter
                     }, {
                         name : 'validationMessage',
                         index : 'validationMessage',
                         width : 200,
                         hidden : false,
+                        sortable: false,
                         cellattr: function (rowId, tv, rawObject, cm, rdata) {
                             return 'style="white-space: normal;'
                         }
@@ -803,11 +811,9 @@
                         index : 'modified',
                         width : 50,
                         editable: false,
-                        edittype: 'checkbox',
+                        sortable: false,
                         align: 'center',
-                        editoptions: { value:"True:False" },
-                        formatter: modifiedFormatter,
-                        formatoptions: {disabled: false}
+                        formatter: modifiedFormatter
                     }
                 ],
                 jsonReader : {
