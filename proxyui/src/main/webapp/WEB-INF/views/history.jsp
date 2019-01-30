@@ -25,13 +25,18 @@
 
         .altRowClass { background: #eee; }
 
-        textarea.preformatted { font-family: monospace; }
+        .ui-jqgrid tr.jqgrow .break-all {
+            white-space: normal;
+            word-break: break-all;
+        }
+
+        .preformatted, textarea.preformatted { font-family: monospace; }
 
         #historyGridDiv {
             margin-bottom: 1em;
         }
 
-        #historyGridDiv .ui-jqgrid .ui-jqgrid-view {
+        #historyGridDiv .ui-jqgrid .ui-jqgrid-bdiv {
             font-size: 14px;
         }
 
@@ -735,77 +740,76 @@
                 pgtext : null,
                 datatype : "json",
                 page : "${page}",
+                toppager: true,
                 rowNum: getNumberOfRows(),
                 altRows: true,
                 altclass: 'altRowClass',
                 colNames : [ 'ID', 'Created At', 'Method', 'Query',
                         'Query Params', 'Code', 'Valid', 'Message', 'Modified?' ],
-                colModel : [{
-                    name : 'id',
-                    index : 'id',
-                    hidden : true,
-                    formatter : idFormatter
-                }, {
-                    name : 'createdAt',
-                    index : 'createdAt',
-                    width : 125,
-                    editable : false,
-                    align : 'center',
-                    sorttype : 'date',
-                    formatter : dateFormatter,
-                }, {
-                    name : 'requestType',
-                    index : 'requestType',
-                    width : 50,
-                    editable : false,
-                    align : 'center'
-                }, {
-                    name : 'originalRequestURL',
-                    index : 'originalRequestURL',
-                    width : 375,
-                    editable : false,
-                    cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal; word-break: break-all;"'
+                colModel : [
+                    {
+                        name : 'id',
+                        index : 'id',
+                        hidden : true,
+                        formatter : idFormatter
+                    }, {
+                        name : 'createdAt',
+                        index : 'createdAt',
+                        width : 125,
+                        editable : false,
+                        align : 'center',
+                        sorttype : 'date',
+                        formatter : dateFormatter,
+                    }, {
+                        name : 'requestType',
+                        index : 'requestType',
+                        width : 50,
+                        editable : false,
+                        align : 'center'
+                    }, {
+                        name : 'originalRequestURL',
+                        index : 'originalRequestURL',
+                        width : 375,
+                        editable : false,
+                        classes: 'break-all',
+                    }, {
+                        name : 'requestParams',
+                        index : 'requestParams',
+                        width : 300,
+                        editable : false,
+                        classes: 'break-all preformatted',
+                    }, {
+                        name : 'responseCode',
+                        index : 'responseCode',
+                        width : 50,
+                        editable : false,
+                        align : 'center'
+                    }, {
+                        name : 'valid',
+                        index : 'valid',
+                        width : 55,
+                        hidden : true,
+                        formatter : validFormatter
+                    }, {
+                        name : 'validationMessage',
+                        index : 'validationMessage',
+                        width : 200,
+                        hidden : false,
+                        cellattr: function (rowId, tv, rawObject, cm, rdata) {
+                            return 'style="white-space: normal;'
+                        }
+                    }, {
+                        name : 'modified',
+                        index : 'modified',
+                        width : 50,
+                        editable: false,
+                        edittype: 'checkbox',
+                        align: 'center',
+                        editoptions: { value:"True:False" },
+                        formatter: modifiedFormatter,
+                        formatoptions: {disabled: false}
                     }
-                }, {
-                    name : 'requestParams',
-                    index : 'requestParams',
-                    width : 300,
-                    editable : false,
-                    cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal; word-break: break-all; font-family: monospace;"'
-                    }
-                }, {
-                    name : 'responseCode',
-                    index : 'responseCode',
-                    width : 50,
-                    editable : false,
-                    align : 'center'
-                }, {
-                    name : 'valid',
-                    index : 'valid',
-                    width : 55,
-                    hidden : true,
-                    formatter : validFormatter
-                }, {
-                    name : 'validationMessage',
-                    index : 'validationMessage',
-                    width : 200,
-                    hidden : false,
-                    cellattr: function (rowId, tv, rawObject, cm, rdata) {
-                        return 'style="white-space: normal;'
-                    }
-                }, {
-                    name : 'modified',
-                    index : 'modified',
-                    width : 50,
-                    editable: false,
-                    edittype: 'checkbox',
-                    align: 'center',
-                    editoptions: { value:"True:False" },
-                    formatter: modifiedFormatter,
-                    formatoptions: {disabled: false}
-                }, ],
+                ],
                 jsonReader : {
                     page : "page",
                     total : "total",
@@ -867,8 +871,11 @@
         $("#historylist").jqGrid('navGrid', '#historynavGrid', {
             edit : false,
             add : false,
-            del : false
-        }, {}, {}, {});
+            del : false,
+            refreshtext: 'Refresh <kbd>r</kbd>',
+            searchtext: 'Search',
+            cloneToTop: true
+        });
     });
 
     function modifiedFormatter(cellvalue, options, rowObject) {
