@@ -107,7 +107,7 @@
 
             <h3 style="display: inline-block">Headers</h3>
             <div class="btn-group btn-group-sm">
-                <button type="button" id="copyResponseHeaders" class="btn btn-default copy-to-clipboard">Copy</button>
+                <button type="button" id="copyResponseHeaders" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>h</kbd></button>
             </div>
             <textarea class="form-control preformatted" data-copy-trigger="copyResponseHeaders" rows="4" id="responseHeaders"></textarea>
             <textarea class="form-control preformatted" data-copy-trigger="copyResponseHeaders" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
@@ -117,7 +117,7 @@
 
             <div class="btn-toolbar">
                 <div class="btn-group btn-group-sm">
-                    <button type="button" id="copyResponseData" class="btn btn-default copy-to-clipboard">Copy</button>
+                    <button type="button" id="copyResponseData" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>d</kbd></button>
                 </div>
 
                 <div class="btn-group btn-group-sm">
@@ -145,7 +145,7 @@
             <h3>URL</h3>
             <div class="btn-toolbar">
                 <div class="btn-group btn-group-sm">
-                    <button type="button" id="copyRequestQuery" class="btn btn-default copy-to-clipboard">Copy</button>
+                    <button type="button" id="copyRequestQuery" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>u</kbd></button>
                 </div>
                 <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-default" onClick="showPathTester()">Test Path</button>
@@ -157,7 +157,7 @@
 
             <h3 style="display: inline-block;">Parameters</h3>
             <div class="btn-group btn-group-sm">
-                <button type="button" id="copyRequestParameters" class="btn btn-default copy-to-clipboard">Copy</button>
+                <button type="button" id="copyRequestParameters" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>p</kbd></button>
             </div>
             <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestParameters" id="requestParameters"></textarea>
             <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestParameters" style="display: none;" id="originalRequestParameters"></textarea>
@@ -165,7 +165,7 @@
 
             <h3 style="display: inline-block;">Headers</h3>
             <div class="btn-group btn-group-sm">
-                <button type="button" id="copyRequestHeaders" class="btn btn-default copy-to-clipboard">Copy</button>
+                <button type="button" id="copyRequestHeaders" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>h</kbd></button>
             </div>
             <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestHeaders" id="requestHeaders"></textarea>
             <textarea class="form-control preformatted" rows="3" data-copy-trigger="copyRequestHeaders" style="display: none;" id="originalRequestHeaders"></textarea>
@@ -173,7 +173,7 @@
 
             <h3 style="display: inline-block;">POST Data</h3>
             <div class="btn-group btn-group-sm">
-                <button type="button" id="copyPOSTData" class="btn btn-default copy-to-clipboard">Copy</button>
+                <button type="button" id="copyPOSTData" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>d</kbd></button>
             </div>
             <span class="label label-info" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span>
             <textarea class="form-control preformatted" data-copy-trigger="copyPOSTData" rows="10" id="requestPOSTData"></textarea>
@@ -184,7 +184,7 @@
         <div id="tabs-3">
             <h3>cURL Command</h3>
             <div class="btn-group btn-group-sm">
-                <button type="button" id="copyCURLCommand" class="btn btn-default copy-to-clipboard">Copy</button>
+                <button type="button" id="copyCURLCommand" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>c</kbd></button>
             </div>
             <textarea class="form-control preformatted" rows="29" data-copy-trigger="copyCURLCommand" id="curlCommand"></textarea>
         </div><!-- /#tabs-3 -->
@@ -604,57 +604,64 @@
             $("#historylist").setGridWidth($("#historyGridDiv").width());
         });
 
-        new ClipboardJS(".copy-to-clipboard", {
-            text: function(trigger) {
-                var $target = $("[data-copy-trigger=\"" + trigger.id + "\"]").filter(function(index) {
-                    return $(this).is(":visible");
-                }).first();
-
-                if ($target.is('textarea')) {
-                    return $target.val();
-                } else if ($target.attr('data-copy-content')) {
-                    return decodeURIComponent($target.attr('data-copy-content'));
-                } else {
-                    return $target.text();
-                }
-            }
-        }).on('success', function(e) {
-            $(e.trigger)
-                .tooltip({
-                    "title": "Copied!",
-                    "placement": "right",
-                    "trigger": "manual"
-                })
-                .tooltip("show");
-        }).on('error', function(e) {
-            $(e.trigger)
-                .tooltip({
-                    "title": "Cannot copy that much text!",
-                    "placement": "right",
-                    "trigger": "manual"
-                })
-                .tooltip("show");
-        });
-
         $(".copy-to-clipboard")
+            .tooltip({
+                    "placement": "right",
+                    "trigger": "manual"
+                })
             .on("shown.bs.tooltip", function(event) {
                 setTimeout(function() {
                     $(event.target).tooltip("hide");
                 }, 1500);
             });
 
+        new ClipboardJS(".copy-to-clipboard", {
+            text: function(trigger) {
+                var $target = $("[data-copy-trigger=\"" + trigger.id + "\"]").filter(function(index) {
+                    return $(this).is(":visible");
+                }).first();
+
+                var copytext;
+
+                if ($target.is('textarea')) {
+                    copytext = $target.val();
+                } else if ($target.attr('data-copy-content')) {
+                    copytext = decodeURIComponent($target.attr('data-copy-content'));
+                } else {
+                    copytext = $target.text();
+                }
+
+                if (copytext.length === 0) {
+                    $(trigger).data('bs.tooltip').options.title = "Nothing copied.";
+                    $(trigger).tooltip('show')
+                }
+
+                return copytext;
+            }
+        }).on('success', function(e) {
+            $(e.trigger).data('bs.tooltip').options.title = "Copied!";
+            $(e.trigger).tooltip("show");
+
+            e.clearSelection();
+        }).on('error', function(e) {
+            $(e.trigger).data('bs.tooltip').options.title = "Could not copy text.";
+            $(e.trigger).tooltip("show");
+
+            e.clearSelection();
+        });
+
         var selectRowUsed = false;
 
         /* Keyboard shortcuts configuration */
         // Tabs: response/request/other navigation
         Mousetrap.bind('1', function() {
-            $("[href=\"#tabs-1\"]").click();
+            $("[href=\"#tabs-1\"]:visible").click();
         });
         Mousetrap.bind('2', function() {
-            $("[href=\"#tabs-2\"]").click();
+            $("[href=\"#tabs-2\"]:visible").click();
         });
         Mousetrap.bind('3', function() {
-            $("[href=\"#tabs-3\"]").click();
+            $("[href=\"#tabs-3\"]:visible").click();
         });
         // Filter
         Mousetrap.bind('f', function(event) {
@@ -662,21 +669,36 @@
             event.stopPropagation();
             $("#searchFilter").focus();
         });
-        Mousetrap.bind('esc', function() {
-            $(":focus").blur();
-        });
         // View data modified/original/diff
-        Mousetrap.bind('m', function() {
-            var selectedTabId = $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
-            $(selectedTabId + " .history-diff-tools:visible .history-modified").click();
+        Mousetrap.bind('m', function() { // shared by Response/Request
+            $(getActiveTabId() + " .history-diff-tools:visible .history-modified").click();
         });
-        Mousetrap.bind('o', function() {
-            var selectedTabId = $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
-            $(selectedTabId + " .history-diff-tools:visible .history-original").click();
+        Mousetrap.bind('o', function() { // shared by Response/Request
+            $(getActiveTabId() + " .history-diff-tools:visible .history-original").click();
         });
-        Mousetrap.bind('d', function() {
+        Mousetrap.bind('d', function() { // shared by Response/Request
             var selectedTabId = $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
-            $(selectedTabId + " .history-diff-tools:visible .history-diff").click();
+            $(getActiveTabId() + " .history-diff-tools:visible .history-diff").click();
+        });
+        // Refresh history
+        Mousetrap.bind('r', function() {
+            $("#refresh_historylist:visible").click();
+        });
+        // Copy operations
+        Mousetrap.bind('c u', function() { // Request URL
+            $("#copyRequestQuery:visible").click();
+        });
+        Mousetrap.bind('c p', function() { // Request Params
+            $("#copyRequestParameters:visible").click();
+        });
+        Mousetrap.bind('c h', function() { // Request/Response Headers
+            $("#copyRequestHeaders:visible, #copyResponseHeaders:visible").first().click();
+        });
+        Mousetrap.bind('c d', function() { // Request/Response Data
+            $("#copyPOSTData:visible, #copyResponseData:visible").first().click();
+        });
+        Mousetrap.bind('c c', function() { // cURL command
+            $("#copyCURLCommand:visible").click();
         });
 
         $("#historylist")
@@ -834,6 +856,10 @@
         }
         newCellValue += ' disabled=true>';
         return newCellValue;
+    }
+
+    function getActiveTabId() {
+        return $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
     }
 
     function showPathTester() {
