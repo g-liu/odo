@@ -21,3 +21,7 @@ body {
     -moz-box-sizing: content-box;
     box-sizing: content-box;
 }
+
+textarea {
+    resize: vertical;
+}

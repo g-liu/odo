@@ -60,22 +60,24 @@
             <a class="navbar-brand" href="#">Odo</a>
         </div>
 
-        <div class="form-group navbar-form navbar-left">
-            <input type="text" class="form-control" placeholder="Search (f)" id="searchFilter">
-            <button class="btn btn-default" type="button" onclick='uriFilter()'>Apply Filter</button>
-            <button class="btn btn-default" type="button" onclick='clearFilter()'>Clear Filters</button>
+        <form class="navbar-form navbar-left" onsubmit="uriFilter();">
+            <div class="form-group">
 
-            <span class="dropdown">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Filter By <span class="caret"></span>
-                </button>
+                <input type="text" class="form-control" placeholder="Filter (f)" id="searchFilter">
+                <button class="btn btn-default" type="submit">Apply Filter</button>
+                <button class="btn btn-default" type="button" onclick='clearFilter()'>Clear Filters</button>
 
-                <ul class="dropdown-menu">
-                    <li><a href="#" onclick='showItemsWithMessages()'>Items With Messages</a></li>
-                </ul>
-            </span>
-        </div>
+                <span class="dropdown">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Filter By <span class="caret"></span>
+                    </button>
 
+                    <ul class="dropdown-menu">
+                        <li><a href="#" onclick='showItemsWithMessages()'>Items With Messages</a></li>
+                    </ul>
+                </span>
+            </div>
+        </form>
 
         <ul class="nav navbar-nav navbar-right">
             <li><a href="#" onclick='clearHistory()'>Clear History</a></li>
@@ -113,7 +115,7 @@
             <textarea class="form-control preformatted" data-copy-trigger="copyResponseHeaders" rows="4" style="display: none;" id="originalResponseHeaders"></textarea>
             <div class="form-control diffarea" id="originalResponseHeaderChange" data-copy-trigger="copyResponseHeaders"></div>
 
-            <h3>Data <span class="label label-info label-small" id="responseTypeLabel"></span> <span class="label label-info label-small" id="responseDataDecodedLabel" style="background-color: #5b7fde"></span></h3>
+            <h3>Data <span class="label label-info label-small" id="responseTypeLabel"></span> <span class="label label-primary label-small" id="responseDataDecodedLabel"></span></h3>
 
             <div class="btn-toolbar">
                 <div class="btn-group btn-group-sm">
@@ -175,7 +177,7 @@
             <div class="btn-group btn-group-sm">
                 <button type="button" id="copyPOSTData" class="btn btn-default copy-to-clipboard">Copy <kbd>c</kbd>&nbsp;<kbd>d</kbd></button>
             </div>
-            <span class="label label-info" id="requestDataDecodedLabel" style="background-color: #5b7fde"></span>
+            <span class="label label-primary" id="requestDataDecodedLabel"></span>
             <textarea class="form-control preformatted" data-copy-trigger="copyPOSTData" rows="10" id="requestPOSTData"></textarea>
             <textarea class="form-control preformatted" data-copy-trigger="copyPOSTData" rows="10" style="display: none" id="originalRequestPOSTData"></textarea>
             <div class="form-control diffarea" data-copy-trigger="copyPOSTData" id="originalRequestPOSTDataChanged"></div>
@@ -193,6 +195,7 @@
 
 <script type="text/javascript">
     var clientUUID = '${clientUUID}';
+    var historyFilter;
 
     function openGridOptions() {
         $("#gridOptionsDialog").dialog({
@@ -244,14 +247,17 @@
     }
 
     function uriFilter() {
-        var filter = $("#searchFilter").val();
+        historyFilter = $("#searchFilter").val();
         jQuery("#historylist")
             .jqGrid(
                 'setGridParam',
                 {
-                    url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}&source_uri[]=' + filter,
+                    url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}&source_uri[]=' + historyFilter,
                     page : 1
-                }).trigger("reloadGrid");
+                })
+            .jqGrid('setCaption', historyCaption())
+            .trigger("reloadGrid")
+        return false; // prevent form redirection
     }
 
     function showItemsWithMessages() {
@@ -265,13 +271,16 @@
     }
 
     function clearFilter() {
+        historyFilter = null;
         jQuery("#historylist")
             .jqGrid(
                 'setGridParam',
                 {
                     url : '<c:url value="/api/history/${profile_id}"/>?clientUUID=${clientUUID}',
                     page : 1
-                }).trigger("reloadGrid");
+                })
+            .jqGrid("setCaption", historyCaption())
+            .trigger("reloadGrid")
     }
 
     var currentHistoryId = -1;
@@ -592,13 +601,6 @@
         $("#tabs").css("overflow", "scroll");
         $("#radioset").buttonset();
 
-        $('#searchFilter').keydown(function(event) {
-            if (event.keyCode == 13) {
-                uriFilter();
-                return false;
-            }
-        });
-
         // bind window resize to fix grid width
         $(window).bind('resize', function() {
             $("#historylist").setGridWidth($("#historyGridDiv").width());
@@ -606,7 +608,7 @@
 
         $(".copy-to-clipboard")
             .tooltip({
-                    "placement": "right",
+                    "placement": "top",
                     "trigger": "manual"
                 })
             .on("shown.bs.tooltip", function(event) {
@@ -682,7 +684,7 @@
         });
         // Refresh history
         Mousetrap.bind('r', function() {
-            $("#refresh_historylist:visible").click();
+            jQuery("#historylist").trigger("reloadGrid");
         });
         // Copy operations
         Mousetrap.bind('c u', function() { // Request URL
@@ -835,7 +837,7 @@
                 sortname : 'id',
                 viewrecords : true,
                 sortorder : "desc",
-                caption : '<font size="5">History: ${profile_name}</font>'
+                caption : historyCaption()
             });
 
         $("#historylist").jqGrid('navGrid', '#historynavGrid', {
@@ -860,6 +862,24 @@
 
     function getActiveTabId() {
         return $("#tabs .ui-state-active a.ui-tabs-anchor").attr("href");
+    }
+
+    function historyCaption() {
+        let $container = $("<div>"); // necessary
+        let $baseCaption = $("<h1>")
+            .attr("style", "font-weight: bold; font-size: 2em; margin: 0.25em;")
+            .text("History: ${profile_name}");
+        if (historyFilter) {
+            $baseCaption
+                .append($("<span>").text(" "))
+                .append($("<span>")
+                .attr({
+                    class: "label label-success label-small",
+                    title: historyFilter
+                })
+                .text("Filtered"));
+        }
+        return $container.append($baseCaption).html();
     }
 
     function showPathTester() {
