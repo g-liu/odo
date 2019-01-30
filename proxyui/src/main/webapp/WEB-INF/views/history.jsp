@@ -23,12 +23,25 @@
 
         .has-switch { height: 30px; }
 
-        .altRowClass { background: #EEEEEE; }
+        .altRowClass { background: #eee; }
 
         textarea.preformatted { font-family: monospace; }
 
         #historyGridDiv {
             margin-bottom: 1em;
+        }
+
+        #historyGridDiv .ui-jqgrid .ui-jqgrid-view {
+            font-size: 14px;
+        }
+
+        #historyContentDiv textarea {
+            background-color: #eee;
+            transition: background-color .15s;
+        }
+
+        #historyContentDiv textarea:focus {
+            background-color: initial;
         }
 
         .diffarea
@@ -37,6 +50,17 @@
             resize: vertical;
             display: none;
             font-family: monospace;
+            background-color: #eee;
+        }
+
+        .copy-only {
+            font-size: 0;
+        }
+
+        @media print {
+            .copy-only {
+                font-size: initial;
+            }
         }
      </style>
 </head>
@@ -847,17 +871,14 @@
         }, {}, {}, {});
     });
 
-    function modifiedFormatter( cellvalue, options, rowObject ) {
-        var checkedValue = 0;
-        if (cellvalue) {
-            checkedValue = 1;
-        }
-        var newCellValue = '<input id="modified_' + rowObject.pathId + '"type="checkbox" offval="0" value="' + checkedValue + '"';
-        if (checkedValue == 1) {
-            newCellValue += 'checked="checked"';
-        }
-        newCellValue += ' disabled=true>';
-        return newCellValue;
+    function modifiedFormatter(cellvalue, options, rowObject) {
+        return $('<div>').append($('<span>')
+                .addClass("glyphicon " + (cellvalue ? "glyphicon-ok text-success" : "glyphicon-remove"))
+                .attr("style", cellvalue ? "font-size: 125%;" : "display: none;"))
+            .append($('<span>')
+                .addClass('copy-only')
+                .text(cellvalue ? 'Yes' : 'No'))
+            .html();
     }
 
     function getActiveTabId() {
