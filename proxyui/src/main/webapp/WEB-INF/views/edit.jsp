@@ -1993,41 +1993,36 @@
 
                     <div id="tabs-1" class="container-flex">
                         <div class="row">
-                            <div class="ui-widget-content ui-corner-all col-xs-5">
-                                <dl>
-                                    <dt>
-                                        Overrides
-                                    </dt>
-                                    <dd>
-                                        <select id="responseOverrideEnabled" class="ui-corner-all" multiple="multiple" style="min-height: 160px; width: 100%" onChange="changeResponseOverrideDiv()">
-                                        </select>
-                                        <br>
-                                        <div style="display: inline-block" class="ui-state-default">
-                                            <span class="ui-icon ui-icon-circle-triangle-n" title="Up" style="float: left;" onClick="overrideMoveUp('response')"></span>
-                                            <span class="ui-icon ui-icon-circle-triangle-s" title="Down" style="float: left;" onClick="overrideMoveDown('response')"></span>
-                                            <span class="ui-icon ui-icon-trash" title="Delete" style="float: right;" onClick="overrideRemove('response')"></span>
+                            <div class="col-xs-5">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Response Overrides</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <select id="responseOverrideEnabled" class="form-control mousetrap" multiple="multiple" style="height: 200px; resize: vertical;" onChange="changeResponseOverrideDiv()"></select>
+                                        <div class="ui-state-default" style="display: inline-block;">
+                                            <span class="ui-icon ui-icon-circle-triangle-n" title="Up" onClick="overrideMoveUp('response')"></span>
+                                            <span class="ui-icon ui-icon-circle-triangle-s" title="Down" onClick="overrideMoveDown('response')"></span>
+                                            <span class="ui-icon ui-icon-trash" title="Delete" onClick="overrideRemove('response')"></span>
                                         </div>
-                                        <br>
-                                    </dd>
 
-                                    <dt>
-                                        Add Override
-                                    </dt>
-                                    <dd>
-                                        <select id="responseOverrideSelect" onfocus="this.selectedIndex = -999;" style="width:100%" onChange="overrideSelectChanged('response')">
-                                            <option value="-999">Select Override</option>
-                                        </select>
-                                    </dd>
-                                </dl>
-                            </div>
+                                        <div class="form-group">
+                                            <label for="responseOverrideSelect">Add override</label>
+                                            <br />
+                                            <select id="responseOverrideSelect" style="width: 100%;" onfocus="this.selectedIndex = -999;" onChange="overrideSelectChanged('response')">
+                                                <option value="-999">Select Override</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /.col-xs-5 -->
 
-                            <div id="responseOverrideDetails" style="display: none;" class="ui-corner-all col-xs-7">
-                                <div class="ui-widget">
-                                    <div class="ui-widget-header ui-corner-all">
-                                        Override Parameters
+                            <div class="col-xs-7">
+                                <div id="responseOverrideDetails" style="display: none;" class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Override Parameters</h3>
                                     </div>
-                                    <div id="responseOverrideParameters" class="ui-widget-content ui-corner-all overrideParameters">
-                                    </div>
+                                    <div id="responseOverrideParameters" class="panel-body"></div>
                                 </div>
                             </div>
                         </div>
@@ -2036,43 +2031,36 @@
 
                     <div id="tabs-2" class="container-flex">
                         <div class="row">
-                            <div class="ui-widget-content ui-corner-all col-xs-5">
-                                <dl>
-                                    <dt>
-                                        Overrides
-                                    </dt>
-                                    <dd>
-                                        <select id="requestOverrideEnabled" class="ui-corner-all" multiple="multiple"
-                                                style="min-height: 160px; width: 100%" onChange="changeRequestOverrideDiv()">
-                                        </select>
-                                        <br>
+                            <div class="col-xs-5">
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Request Overrides</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <select id="requestOverrideEnabled" class="form-control mousetrap" multiple="multiple" style="height: 200px; resize: vertical;" onChange="changeRequestOverrideDiv()"></select>
                                         <div style="display: inline-block" class="ui-state-default">
-                                            <span class="ui-icon ui-icon-circle-triangle-n" title="Up" style="float: left;" onClick="overrideMoveUp('request')"></span>
-                                            <span class="ui-icon ui-icon-circle-triangle-s" title="Down" style="float: left;" onClick="overrideMoveDown('request')"></span>
-                                            <span class="ui-icon ui-icon-trash" title="Delete" style="float: right;" onClick="overrideRemove('request')"></span>
+                                            <span class="ui-icon ui-icon-circle-triangle-n" title="Up" onClick="overrideMoveUp('request')"></span>
+                                            <span class="ui-icon ui-icon-circle-triangle-s" title="Down" onClick="overrideMoveDown('request')"></span>
+                                            <span class="ui-icon ui-icon-trash" title="Delete" onClick="overrideRemove('request')"></span>
                                         </div>
-                                        <br>
-                                    </dd>
 
-                                    <dt>
-                                        Add Override
-                                    </dt>
-                                    <dd>
-                                        <select id="requestOverrideSelect" onfocus="this.selectedIndex = -999;" style="width:100%" onChange="overrideSelectChanged('request')">
-                                            <option value="-999">Select Override</option>
-                                        </select>
-                                    </dd>
-                                </dl>
-                            </div>
+                                        <div class="form-group">
+                                            <label for="requestOverrideSelect">Add override</label>
+                                            <br />
+                                            <select id="requestOverrideSelect" onfocus="this.selectedIndex = -999;" style="width: 100%;" onChange="overrideSelectChanged('request')">
+                                                <option value="-999">Select Override</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /.col-xs-5 -->
 
-                            <div id="requestOverrideDetails"  style="display:none" class="ui-corner-all col-xs-7">
-                                <div class="ui-widget">
-                                    <div class="ui-widget-header ui-corner-all" >
-                                        Override Parameters
+                            <div class="col-xs-7">
+                                <div id="requestOverrideDetails"  style="display:none" class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Override Parameters</h3>
                                     </div>
-                                    <div id="requestOverrideParameters" class="ui-widget-content ui-corner-all overrideParameters">
-                                        None
-                                    </div>
+                                    <div id="requestOverrideParameters" class="panel-body">None</div>
                                 </div>
                             </div>
                         </div>
