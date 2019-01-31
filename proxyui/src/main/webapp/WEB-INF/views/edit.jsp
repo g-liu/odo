@@ -1522,56 +1522,64 @@
                             .addClass("bg-info")
                             .html(data.enabledEndpoint.methodInformation.className + " " + data.enabledEndpoint.methodInformation.methodName));
 
-                    var $formDl = $("<dl>");
+                    var $formDl = $("<div>").addClass("form-group");
                     $.each(data.enabledEndpoint.methodInformation.methodArguments, function(i, el) {
+                        var inputId = type + "_args_" + i;
                         if (typeof data.enabledEndpoint.methodInformation.methodArgumentNames[i] != 'undefined') {
-                            $formDl.append($("<dt>")
-                                .text(data.enabledEndpoint.methodInformation.methodArgumentNames[i]));
+                            $formDl
+                                .append($("<label>")
+                                    .attr("for", inputId)
+                                    .text(data.enabledEndpoint.methodInformation.methodArgumentNames[i]));
                         }
 
                         if (methodId == -1) {
                             $formDl
-                                .append($("<dd>")
-                                    .append($("<textarea>")
-                                        .attr({
-                                            "id": type + "_args_" + i,
-                                            "rows": 10,
-                                            "style": "width: 100%;"
-                                        }))
-                                    .append($("<br>")))
-                                .append($("<dt>").text("Response Code"))
+                                .append($("<textarea>")
+                                    .attr({
+                                        "id": inputId,
+                                        "class": "form-control",
+                                        "rows": 10
+                                    }))
+                                .append($("<label>")
+                                    .attr("for", "setResponseCode")
+                                    .text("Response Code"))
                                 .append($("<dd>")
                                     .append($("<input>")
                                         .attr({
-                                            "id": type + "_args_" + i,
-                                            "style": "width: 60%;",
-                                            "type": "text",
+                                            "id": "setResponseCode",
+                                            "min": 100,
+                                            "max": 599,
+                                            "class": "form-control",
+                                            "type": "number",
                                             "value": ""
                                         })));
                         } else {
                             $formDl
-                                .append($("<dd>")
-                                    .text("(" + el + ")")
-                                    .append($("<input>")
-                                        .attr({
-                                            "id": type + "_args_" + i,
-                                            "style": "width: 60%;",
-                                            "type": "text",
-                                            "value": ""
-                                        })));
+                                .append($("<label>")
+                                    .attr("for", inputId)
+                                    .text("(" + el + ")"))
+                                .append($("<input>")
+                                    .attr({
+                                        "id": inputId,
+                                        "class": "form-control",
+                                        "type": "text",
+                                        "value": ""
+                                    }));
                         }
                     });
 
                     $formDl
-                        .append($("<dt>").text("Repeat Count"))
-                        .append($("<dd>")
-                            .append($("<input>")
-                                .attr({
-                                    "id": "setRepeatNumber",
-                                    "style": "width: 60%;",
-                                    "type": "text",
-                                    "value": data.enabledEndpoint.repeatNumber
-                                })))
+                        .append($("<label>")
+                            .attr("for", "setRepeatNumber")
+                            .text("Repeat Count"))
+                        .append($("<input>")
+                            .attr({
+                                "id": "setRepeatNumber",
+                                "type": "number",
+                                "min": -1,
+                                "class": "form-control",
+                                "value": data.enabledEndpoint.repeatNumber
+                            }));
 
                     $formData
                         .append($formDl)
@@ -2027,43 +2035,45 @@
                     </div><!-- /#tabs-1 -->
 
 
-                    <div id="tabs-2">
-                        <div  class="ui-widget-content ui-corner-all detailsLeft">
-                            <dl>
-                                <dt>
-                                    Overrides
-                                </dt>
-                                <dd>
-                                    <select id="requestOverrideEnabled" class="ui-corner-all" multiple="multiple"
-                                            style="min-height: 160px; width: 100%" onChange="changeRequestOverrideDiv()">
-                                    </select>
-                                    <br>
-                                    <div style="display: inline-block" class="ui-state-default">
-                                        <span class="ui-icon ui-icon-circle-triangle-n" title="Up" style="float: left;" onClick="overrideMoveUp('request')"></span>
-                                        <span class="ui-icon ui-icon-circle-triangle-s" title="Down" style="float: left;" onClick="overrideMoveDown('request')"></span>
-                                        <span class="ui-icon ui-icon-trash" title="Delete" style="float: right;" onClick="overrideRemove('request')"></span>
+                    <div id="tabs-2" class="container-flex">
+                        <div class="row">
+                            <div class="ui-widget-content ui-corner-all col-xs-5">
+                                <dl>
+                                    <dt>
+                                        Overrides
+                                    </dt>
+                                    <dd>
+                                        <select id="requestOverrideEnabled" class="ui-corner-all" multiple="multiple"
+                                                style="min-height: 160px; width: 100%" onChange="changeRequestOverrideDiv()">
+                                        </select>
+                                        <br>
+                                        <div style="display: inline-block" class="ui-state-default">
+                                            <span class="ui-icon ui-icon-circle-triangle-n" title="Up" style="float: left;" onClick="overrideMoveUp('request')"></span>
+                                            <span class="ui-icon ui-icon-circle-triangle-s" title="Down" style="float: left;" onClick="overrideMoveDown('request')"></span>
+                                            <span class="ui-icon ui-icon-trash" title="Delete" style="float: right;" onClick="overrideRemove('request')"></span>
+                                        </div>
+                                        <br>
+                                    </dd>
+
+                                    <dt>
+                                        Add Override
+                                    </dt>
+                                    <dd>
+                                        <select id="requestOverrideSelect" onfocus="this.selectedIndex = -999;" style="width:100%" onChange="overrideSelectChanged('request')">
+                                            <option value="-999">Select Override</option>
+                                        </select>
+                                    </dd>
+                                </dl>
+                            </div>
+
+                            <div id="requestOverrideDetails"  style="display:none" class="ui-corner-all col-xs-7">
+                                <div class="ui-widget">
+                                    <div class="ui-widget-header ui-corner-all" >
+                                        Override Parameters
                                     </div>
-                                    <br>
-                                </dd>
-
-                                <dt>
-                                    Add Override
-                                </dt>
-                                <dd>
-                                    <select id="requestOverrideSelect" onfocus="this.selectedIndex = -999;" style="width:100%" onChange="overrideSelectChanged('request')">
-                                        <option value="-999">Select Override</option>
-                                    </select>
-                                </dd>
-                            </dl>
-                        </div>
-
-                        <div id="requestOverrideDetails"  style="display:none" class="ui-corner-all detailsRight">
-                            <div class="ui-widget">
-                                <div class="ui-widget-header ui-corner-all" >
-                                    Override Parameters
-                                </div>
-                                <div id="requestOverrideParameters" class="ui-widget-content ui-corner-all overrideParameters">
-                                    None
+                                    <div id="requestOverrideParameters" class="ui-widget-content ui-corner-all overrideParameters">
+                                        None
+                                    </div>
                                 </div>
                             </div>
                         </div>
