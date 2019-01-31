@@ -519,6 +519,8 @@
                 $("[href=\"#tabs-3\"]").click();
             });
 
+
+
             var serverList = jQuery("#serverlist");
             var initServerWidth = 0;
             serverList.jqGrid({
@@ -1227,11 +1229,6 @@
                 }
             }
         });
-
-        /* KEEPS DETAILS MENU FOLLOWING SCROLL */
-        $(document).scroll(function() {
-            $("#details").stop().animate({"margin-top": $(document).scrollTop()}, 0);
-        })
 
         function overrideRemove(type) {
             var id = currentPathId;
@@ -1968,7 +1965,7 @@
             </div>
         </div>
 
-        <div id="details">
+        <div id="details" data-spy="affix">
             <div class="serverGroupEdit" id="serverEdit">
                 <div>
                     <h2><span class="label label-default" >Edit Server Groups</span></h2>
@@ -2069,7 +2066,7 @@
                     <div id="tabs-3" class="container-flex">
                         <form onsubmit="applyGeneralPathChanges();">
                             <div class="form-group row">
-                                <label for="pathGlobal" class="col-sm-3 form-check-label">Global?</label>
+                                <label for="pathGlobal" class="col-sm-3 form-check-label mousetrap">Global?</label>
                                 <div class="col-sm-9">
                                     <input id="pathGlobal" type="checkbox" class="form-check-input" />
                                 </div>
@@ -2095,7 +2092,7 @@
                             <div class="form-group row">
                                 <label for="requestType" class="col-sm-3">Request Type</label>
                                 <div class="col-sm-3">
-                                    <select id="requestType" class="form-control" onChange="pathRequestTypeChanged()">
+                                    <select id="requestType" class="form-control mousetrap" onChange="pathRequestTypeChanged()">
                                         <option value="0">ALL</option>
                                         <option value="1">GET</option>
                                         <option value="2">PUT</option>
