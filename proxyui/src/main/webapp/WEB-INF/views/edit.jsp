@@ -1517,29 +1517,38 @@
                         return;
                     }
 
+                    // TODO: Convert code below into templatable items
                     var $formData = $("<form>")
                         .append($("<div>")
                             .addClass("bg-info")
-                            .html(data.enabledEndpoint.methodInformation.className + " " + data.enabledEndpoint.methodInformation.methodName));
+                            .text(data.enabledEndpoint.methodInformation.className + " " + data.enabledEndpoint.methodInformation.methodName));
 
-                    var $formDl = $("<div>").addClass("form-group");
+                    var $formDiv = $("<div>").addClass("form-group");
                     $.each(data.enabledEndpoint.methodInformation.methodArguments, function(i, el) {
                         var inputId = type + "_args_" + i;
+                        var inputValue;
+                        if (data.enabledEndpoint.arguments.length > i) {
+                            inputValue = data.enabledEndpoint.arguments[i];
+                        } else if (data.enabledEndpoint.methodInformation.methodDefaultArguments[i] != null) {
+                            inputValue = data.enabledEndpoint.methodInformation.methodDefaultArguments[i];
+                        }
+
                         if (typeof data.enabledEndpoint.methodInformation.methodArgumentNames[i] != 'undefined') {
-                            $formDl
+                            $formDiv
                                 .append($("<label>")
                                     .attr("for", inputId)
                                     .text(data.enabledEndpoint.methodInformation.methodArgumentNames[i]));
                         }
 
                         if (methodId == -1) {
-                            $formDl
+                            $formDiv
                                 .append($("<textarea>")
                                     .attr({
                                         "id": inputId,
                                         "class": "form-control",
                                         "rows": 10
-                                    }))
+                                    })
+                                    .text(inputValue))
                                 .append($("<label>")
                                     .attr("for", "setResponseCode")
                                     .text("Response Code"))
@@ -1550,11 +1559,11 @@
                                             "min": 100,
                                             "max": 599,
                                             "class": "form-control",
-                                            "type": "number",
-                                            "value": ""
-                                        })));
+                                            "type": "number"
+                                        })
+                                        .val(data.enabledEndpoint.responseCode)));
                         } else {
-                            $formDl
+                            $formDiv
                                 .append($("<label>")
                                     .attr("for", inputId)
                                     .text("(" + el + ")"))
@@ -1563,12 +1572,12 @@
                                         "id": inputId,
                                         "class": "form-control",
                                         "type": "text",
-                                        "value": ""
-                                    }));
+                                    })
+                                    .val(inputValue));
                         }
                     });
 
-                    $formDl
+                    $formDiv
                         .append($("<label>")
                             .attr("for", "setRepeatNumber")
                             .text("Repeat Count"))
@@ -1577,12 +1586,12 @@
                                 "id": "setRepeatNumber",
                                 "type": "number",
                                 "min": -1,
-                                "class": "form-control",
-                                "value": data.enabledEndpoint.repeatNumber
-                            }));
+                                "class": "form-control"
+                            })
+                            .val(data.enabledEndpoint.repeatNumber));
 
                     $formData
-                        .append($formDl)
+                        .append($formDiv)
                         .append($("<input>")
                             .addClass("btn btn-primary")
                             .text("Apply")
@@ -1593,16 +1602,6 @@
                         });
 
                     $("#" + type + "OverrideParameters").empty().append($formData).show();
-
-                    $.each(data.enabledEndpoint.methodInformation.methodArguments, function(i, el) {
-                        // populate the override parameters
-                        if (data.enabledEndpoint.arguments.length > i) {
-                            $("#" + type + "_args_" + i).val(data.enabledEndpoint.arguments[i]);
-                        } else if (data.enabledEndpoint.methodInformation.methodDefaultArguments[i] != null) {
-                            $("#" + type + "_args_" + i).val(data.enabledEndpoint.methodInformation.methodDefaultArguments[i]);
-                        }
-                    });
-
                     $("#" + type + "OverrideDetails").show();
                 }
             });
