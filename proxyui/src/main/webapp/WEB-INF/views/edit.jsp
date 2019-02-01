@@ -289,28 +289,30 @@
         }
 
         function responseEnabledFormatter(cellvalue, options, rowObject) {
-            var checkedValue = 0;
-            if (cellvalue == true) {
-                checkedValue = 1;
-            }
-            var newCellValue = '<input id="response_enabled_' + rowObject.pathId + '" onChange="responseEnabledChanged(response_enabled_' + rowObject.pathId + ')" type="checkbox" offval="0" value="' + checkedValue + '"';
-            if (checkedValue == 1) {
-                newCellValue += 'checked="checked"';
-            }
-            newCellValue += '>';
-            return newCellValue;
+            var elementId = "response_enabled_" + rowObject.pathId;
+            return $("<div>").append(
+                $("<label>")
+                    .attr({
+                        for: elementId,
+                        style: "display: inline-block; height: 100%; width: 100%; margin: 0; padding: 0;"
+                    })
+                    .append($("<input>")
+                        .attr({
+                            type: "checkbox",
+                            id: elementId,
+                            onchange: "responseEnabledChanged(" + elementId + ")",
+                            checked: cellvalue,
+                            offval: "0"
+                        })
+                        .val(cellvalue ? "1" : "0")))
+                .html();
         }
 
         function responseEnabledChanged(element) {
             var id = element.id;
             var pathId = element.id.substring(17, element.id.length);
 
-            var enabled = element.checked;
-            if (enabled == true) {
-                enabled = 1;
-            } else {
-                enabled = 0;
-            }
+            var enabled = element.checked ? 1 : 0;
 
             var type = type + 'Enabled';
             $.ajax({
@@ -327,28 +329,30 @@
         }
 
         function requestEnabledFormatter(cellvalue, options, rowObject) {
-            var checkedValue = 0;
-            if (cellvalue == true) {
-                checkedValue = 1;
-            }
-            var newCellValue = '<input id="request_enabled_' + rowObject.pathId + '" onChange="requestEnabledChanged(request_enabled_' + rowObject.pathId + ')" type="checkbox" offval="0" value="' + checkedValue + '"';
-            if (checkedValue == 1) {
-                newCellValue += 'checked="checked"';
-            }
-            newCellValue += '>';
-            return newCellValue;
+            var elementId = "request_enabled_" + rowObject.pathId;
+            return $("<div>").append(
+                $("<label>")
+                    .attr({
+                        for: elementId,
+                        style: "display: inline-block; height: 100%; width: 100%; margin: 0; padding: 0;"
+                    })
+                    .append($("<input>")
+                        .attr({
+                            type: "checkbox",
+                            id: elementId,
+                            onchange: "requestEnabledChanged(" + elementId + ")",
+                            checked: cellvalue,
+                            offval: "0"
+                        })
+                        .val(cellvalue ? "1" : "0")))
+                .html();
         }
 
         function requestEnabledChanged(element) {
             var id = element.id;
             var pathId = element.id.substring(16, element.id.length);
 
-            var enabled = element.checked;
-            if (enabled == true) {
-                enabled = 1;
-            } else {
-                enabled = 0;
-            }
+            var enabled = element.checked ? 1 : 0;
 
             var type = type + 'Enabled';
             $.ajax({
