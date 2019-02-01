@@ -847,8 +847,7 @@
                     // allow grid resize
                     jQuery("#historylist").jqGrid('gridResize',
                     {
-                        minHeight:300,
-                        maxHeight:1000,
+                        handles: "n, s",
                         stop: function( event, ui ) {
                             $.cookie("historyGridHeight", ui.size.height, { expires: 10000, path: '/testproxy/history' });
                         }

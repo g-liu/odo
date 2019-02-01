@@ -51,6 +51,7 @@
     </style>
 
     <script type="text/javascript">
+        'use strict';
         $.jgrid.no_legacy_api = true;
         $.jgrid.useJSON = true;
 
@@ -99,7 +100,7 @@
             clientInfo.html(clientInfoHTML);
         }
 
-        function changeActive(value){
+        function changeActive(value) {
             $.ajax({
                 type:"POST",
                 url: '<c:url value="/api/profile/${profile_id}/clients/${clientUUID}"/>',
@@ -127,16 +128,6 @@
                     }
                 }
             });
-        }
-
-        window.onload = function () {
-            // Adapted from: http://blog.teamtreehouse.com/uploading-files-ajax
-            $('#configurationUploadForm').submit(function(event) {
-                event.preventDefault();
-
-                var file = $("#configurationUploadFile").files[0];
-                importConfigurationRequest(file);
-            })
         }
 
         function exportConfigurationFile() {
@@ -208,18 +199,7 @@
             });
         }
 
-        // This overrides the jgrid delete button to be more REST friendly
-        $.extend($.jgrid.del, {
-            mtype: "DELETE",
-            serializeDelData: function () {
-                return ""; // don't send and body for the HTTP DELETE
-            },
-            onclickSubmit: function (params, postdata) {
-                params.url += '/' + encodeURIComponent(postdata);
-            }
-        });
-
-        function requestTypeFormatter( cellvalue, options, rowObject ) {
+        function requestTypeFormatter(cellvalue, options, rowObject) {
             if (cellvalue == 0) {
                 return "ALL";
             } else if (cellvalue == 1) {
@@ -308,7 +288,7 @@
             $(gridId).setGridParam({datatype:'json', page:1}).trigger("reloadGrid");
         }
 
-        function responseEnabledFormatter( cellvalue, options, rowObject ) {
+        function responseEnabledFormatter(cellvalue, options, rowObject) {
             var checkedValue = 0;
             if (cellvalue == true) {
                 checkedValue = 1;
@@ -346,7 +326,7 @@
             });
         }
 
-        function requestEnabledFormatter( cellvalue, options, rowObject ) {
+        function requestEnabledFormatter(cellvalue, options, rowObject) {
             var checkedValue = 0;
             if (cellvalue == true) {
                 checkedValue = 1;
@@ -389,7 +369,7 @@
         }
 
         var currentServerId = -1;
-        function serverIdFormatter( cellvalue, options, rowObject ) {
+        function serverIdFormatter(cellvalue, options, rowObject) {
             currentServerId = cellvalue;
             return cellvalue;
         }
@@ -442,16 +422,14 @@
             window.location = '<c:url value="/cert/"/>' + serverHost;
         }
 
-        function destinationHostFormatter (cellvalue, options, rowObject)
-        {
+        function destinationHostFormatter (cellvalue, options, rowObject) {
         	if (cellvalue === "") {
         		return "<span style=\"display: none\">hidden</span><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\" title=\"Click here to enter a destination address if it is different from the source\"></span>Forwarding to source";
         	}
         	return cellvalue;
         }
 
-        function destinationHostUnFormatter (cellvalue, options, rowObject)
-        {
+        function destinationHostUnFormatter (cellvalue, options, rowObject) {
         	// "hidden" is hidden text in the input box
         	if (cellvalue.indexOf("hidden") === 0) {
         		return "";
@@ -459,7 +437,26 @@
         	return cellvalue;
         }
 
-        $(document).ready(function () {
+        $(document).ready(function() {
+            // Adapted from: http://blog.teamtreehouse.com/uploading-files-ajax
+            $('#configurationUploadForm').submit(function(event) {
+                event.preventDefault();
+
+                var file = $("#configurationUploadFile").files[0];
+                importConfigurationRequest(file);
+            });
+
+            // This overrides the jgrid delete button to be more REST friendly
+            $.extend($.jgrid.del, {
+                mtype: "DELETE",
+                serializeDelData: function () {
+                    return ""; // don't send and body for the HTTP DELETE
+                },
+                onclickSubmit: function (params, postdata) {
+                    params.url += '/' + encodeURIComponent(postdata);
+                }
+            });
+
             // turn on all tooltips
             $("#statusBar").tooltip({selector: '[data-toggle=tooltip]'});
             $.ajax({
@@ -479,7 +476,6 @@
                     }
                 }
             });
-            'use strict';
 
             updateStatus();
             $("#responseOverrideSelect").select2();
@@ -642,6 +638,8 @@
                     return [true];
                 }
             });
+            $("#serverlist").jqGrid('gridResize', { handles: "n, s" });
+
 
             $("#serverGroupList").jqGrid({
                 autowidth : true,
@@ -677,6 +675,7 @@
                 },
                 datatype : "json",
                 loadonce: true,
+                height: "auto",
                 pager : '#serverGroupNavGrid',
                 pgbuttons : false,
                 pgtext : null,
@@ -739,7 +738,11 @@
                             required: true
                         },
                         editable: true,
-                        formoptions: {label: "Path name (*)"}
+                        formoptions: {label: "Path name (*)"},
+                        search: true,
+                        searchoptions: {
+                            clearSearch: false
+                        }
                     },
                     {
                         name: 'path',
@@ -761,7 +764,11 @@
                         edittype: 'select',
                         editoptions: {defaultValue: 0, value: getRequestTypes()},
                         editrules: {edithidden: true},
-                        formatter: requestTypeFormatter
+                        formatter: requestTypeFormatter,
+                        search: true,
+                        searchoptions: {
+                            clearSearch: false
+                        }
                     },
                     {
                         name: 'responseEnabled',
@@ -772,7 +779,11 @@
                         align: 'center',
                         editoptions: { value: "True:False" },
                         formatter: responseEnabledFormatter,
-                        formatoptions: {disabled: false}
+                        formatoptions: {disabled: false},
+                        search: true,
+                        searchoptions: {
+                            clearSearch: false
+                        }
                     }, {
                         name: 'requestEnabled',
                         index: 'requestEnabled',
@@ -782,7 +793,11 @@
                         align: 'center',
                         editoptions: { value:"True:False" },
                         formatter: requestEnabledFormatter,
-                        formatoptions: {disabled: false}
+                        formatoptions: {disabled: false},
+                        search: true,
+                        searchoptions: {
+                            clearSearch: false
+                        }
                     }
                 ],
                 datatype: "json",
@@ -834,7 +849,6 @@
                     closeAfterEdit:true,
                     topinfo:"Fields marked with a (*) are required.",
                     errorTextFormat: function (data) {
-                        console.log(data);
                         return data.responseText;
                     },
                     afterComplete: function(data) {
@@ -873,6 +887,8 @@
                 stringResult: true,
                 searchOnEnter: false,
             });
+            $("#packages").jqGrid('gridResize', { handles: "n, s" });
+
 
             var options = {
                 update: function(event, ui) {
@@ -1054,14 +1070,36 @@
             });
             populateGroups();
 
+            $("#packages").jqGrid('navGrid','#packages',{
+                edit: false,
+                add: true,
+                del: true,
+                search: false
+            });
+            loadPath(currentPathId);
+
+            // http://stackoverflow.com/questions/11112127/prevent-backspace-from-navigating-back-with-jquery-like-googles-homepage
+            $(document).on("keydown", function (e){
+                if(e.keyCode == 46 || e.keyCode == 8) {
+                    var active = $("#tabs").tabs("option", "active");
+                    if (document.activeElement.id == "responseOverrideEnabled") {
+                        var type = "response"
+                    } else if (document.activeElement.id == "requestOverrideEnabled") {
+                        var type = "request";
+                    } else {
+                        return;
+                    }
+                    var selector = "select#" + type + "OverrideEnabled" + " option:selected";
+                    var selection = $(selector);
+                    if (selection.length > 0) {
+                        e.preventDefault();
+                        overrideRemove(type);
+                    }
+                }
+            });
+
+
         });
-        $("#packages").jqGrid('navGrid','#packages',{
-            edit: false,
-            add: true,
-            del: true,
-            search: false
-        });
-        loadPath(currentPathId);
 
         function getExampleText(item) {
             switch(item) {
@@ -1082,7 +1120,6 @@
                 url: '<c:url value="/api/servergroup/" />' + groupId,
                 data: ({activate: true, profileId: "${profile_id}", clientUUID: "${clientUUID}" }),
                 success: function(data) {
-                    console.log("reloading server list");
                     reloadGrid("#serverlist");
 
                 }
@@ -1140,26 +1177,6 @@
             }
         }
 
-        // http://stackoverflow.com/questions/11112127/prevent-backspace-from-navigating-back-with-jquery-like-googles-homepage
-        $(document).on("keydown", function (e){
-            if(e.keyCode == 46 || e.keyCode == 8) {
-                var active = $("#tabs").tabs("option", "active");
-                if (document.activeElement.id == "responseOverrideEnabled") {
-                    var type = "response"
-                } else if (document.activeElement.id == "requestOverrideEnabled") {
-                    var type = "request";
-                } else {
-                    return;
-                }
-                var selector = "select#" + type + "OverrideEnabled" + " option:selected";
-                var selection = $(selector);
-                if (selection.length > 0) {
-                    e.preventDefault();
-                    overrideRemove(type);
-                }
-            }
-        });
-
         function overrideRemove(type) {
             var id = currentPathId;
             var selector = "select#" + type + "OverrideEnabled" + " option:selected";
@@ -1201,7 +1218,6 @@
             var selection = $(selector);
 
             selection.each(function(i, selected){
-                console.log(selected.value);
                 $.ajax({
                     type: 'POST',
                     url: '<c:url value="/api/path/"/>' + id,
@@ -1223,7 +1239,6 @@
             var selection = $(selector);
 
             selection.each(function(i, selected){
-                console.log(selected.value);
                 $.ajax({
                     type:"POST",
                     url: '<c:url value="/api/path/"/>' + id,
@@ -1370,7 +1385,7 @@
             $("#" + type + "_enabled_" + pathId).click();
         }
 
-        function populateResponseOverrideList(possibleEndpoints){
+        function populateResponseOverrideList(possibleEndpoints) {
             // preprocess methods into buckets based on class name
             var classHash = {};
             jQuery.each(possibleEndpoints, function() {
@@ -1404,11 +1419,11 @@
         }
 
         // this returns a formatted string of arguments for display in the "Order" column
-        function getFormattedArguments( arguments, length ) {
+        function getFormattedArguments(args, length) {
             var argString = '';
 
             // show XX instead of an argument since they aren't all set
-            if (length > arguments.length) {
+            if (length > args.length) {
                 for (var x = 0; x < length; x++) {
                     argString += "XX";
 
@@ -1416,7 +1431,7 @@
                         argString += ",";
                 }
             } else { // show actual arguments
-                jQuery.each(arguments, function(methodArgsX, methodArgs) {
+                jQuery.each(args, function(methodArgsX, methodArgs) {
                     // truncate methodArgs if it is > 10 char
                     var displayStr = methodArgs;
                     if (methodArgs.length > 10) {
@@ -1779,7 +1794,7 @@
                     .append($("<option>").val("-7").text("Custom Post Body")));
         }
 
-        function toggleServerGroupEdit(){
+        function toggleServerGroupEdit() {
             if($('#serverEdit').is(':visible') ) {
                 $("#serverEdit").hide();
                 $("#editServerGroups").attr("class", "btn-xs btn-default");
