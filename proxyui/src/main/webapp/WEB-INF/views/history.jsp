@@ -223,6 +223,7 @@
 </div>
 
 <script type="text/javascript">
+    'use strict';
     var clientUUID = '${clientUUID}';
     var historyFilter;
 
@@ -881,6 +882,22 @@
             searchtext: 'Search',
             cloneToTop: true
         });
+
+        //http://stackoverflow.com/questions/10655202/detect-multiple-keys-on-single-keypress-event-on-jquery
+        //17 = CTRL, 8 = DEL, 46 = Backspace
+        var map = {17: false, 8: false, 46: false};
+        $(document).keydown(function(e) {
+            if (e.keyCode in map) {
+                map[e.keyCode] = true;
+                if (map[17] && (map[8] || map[46])) {
+                    clearHistory();
+                }
+            }
+        }).keyup(function(e) {
+            if (e.keyCode in map) {
+                map[e.keyCode] = false;
+            }
+        });
     });
 
     function modifiedFormatter(cellvalue, options, rowObject) {
@@ -940,22 +957,6 @@
         pathTesterSubmit();
     }
 
-    //http://stackoverflow.com/questions/10655202/detect-multiple-keys-on-single-keypress-event-on-jquery
-    //17 = CTRL, 8 = DEL, 46 = Backspace
-    var map = {17: false, 8: false, 46: false};
-    $(document).keydown(function(e) {
-        if (e.keyCode in map) {
-            map[e.keyCode] = true;
-            if (map[17] && (map[8] || map[46])) {
-                clearHistory();
-            }
-        }
-    }).keyup(function(e) {
-        if (e.keyCode in map) {
-            map[e.keyCode] = false;
-        }
-    });
-
     /**
     This is adapted from https://code.google.com/p/google-diff-match-patch/ as instructed in the api documentation
     */
@@ -964,7 +965,7 @@
      * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
      * @return {string} HTML representation.
      */
-    diff_prettyHtml = function(diffs) {
+    function diff_prettyHtml(diffs) {
         var html = [];
         var pattern_amp = /&/g;
         var pattern_lt = /</g;

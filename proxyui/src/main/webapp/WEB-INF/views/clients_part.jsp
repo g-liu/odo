@@ -1,9 +1,5 @@
-<style type="text/css">
-    .ui-widget-content .selectedRow {
-        color: blue;
-    }
-</style>
-<script>
+<script type="text/javascript">
+'use strict';
 var id = -1;
 function idFormatter( cellvalue, options, rowObject ) {
     id = cellvalue;
@@ -57,13 +53,8 @@ function manageClientPopup() {
         title: "Manage Clients",
         modal: true,
         resizeable: true,
-        width:'auto',
-        height:'auto',
-        buttons: {
-            "Close": function () {
-                $("#changeClientDialog").dialog("close");
-            }
-        }
+        width: 'auto',
+        height: 'auto',
     });
 }
 
@@ -246,7 +237,6 @@ $(document).ready(function () {
         sortname : 'id',
         viewrecords : true,
         sortorder : "desc",
-        //caption : '<font size="5">Clients: ${profile_name}</font>'
     });
     clientList.jqGrid('navGrid', '#clientnavGrid', {
         edit : false,
@@ -287,8 +277,7 @@ $(document).ready(function () {
                 params += "clientUUID=" + odoId + "&";
             }
 
-            rp_ge.url = '<c:url value="/api/profile/{profileIdentifier}/clients/delete"/>?' +
-                    params;
+            rp_ge.url = '<c:url value="/api/profile/{profileIdentifier}/clients/delete"/>?' + params;
             console.log(rp_ge.url);
         },
         reloadAfterSubmit: true

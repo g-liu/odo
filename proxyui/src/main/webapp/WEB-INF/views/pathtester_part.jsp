@@ -1,9 +1,5 @@
-<style type="text/css">
-.paddedtable td {
-    padding: 10px
-}
-</style>
 <script type="text/javascript">
+'use strict';
 function pathTesterSubmit() {
     var url = $('#pathTesterURL').val();
     var requestType = $('#pathTesterRequestType').val();
@@ -45,13 +41,7 @@ function navigatePathTester() {
     $("#pathTesterDialog").dialog({
         title: "Path Tester",
         width: 750,
-        modal: true,
-        position:['top',20],
-        buttons: {
-          "Close": function() {
-              $("#pathTesterDialog").dialog("close");
-          }
-        }
+        modal: true
     });
 }
 </script>

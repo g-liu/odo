@@ -1097,8 +1097,6 @@
                     }
                 }
             });
-
-
         });
 
         function getExampleText(item) {

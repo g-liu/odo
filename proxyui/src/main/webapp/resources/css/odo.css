@@ -25,3 +25,11 @@ body {
 textarea {
     resize: vertical;
 }
+
+.ui-widget-content .selectedRow {
+    color: blue;
+}
+
+.paddedtable td {
+    padding: 10px;
+}
