@@ -10,45 +10,43 @@
     <%@ include file="/resources/js/webjars.include" %>
 
     <style type="text/css">
-        .overrideParameters
-        {
-            padding: 12px;
-        }
-
         #details {
             position: sticky;
-            top: 10px;
+            top: 12px;
         }
 
         #serverEdit {
-            display:none;
+            display: none;
         }
 
-        #nav>li>a { /* MAKES THE PILLS SMALLER */
-            padding-top:3px !important;
-            padding-bottom:3px !important;
+        #listContainer > div {
+            margin-bottom: 1em;
         }
 
-        #pg_packagePager .ui-pg-table, #pg_servernavGrid .ui-pg-table, #servernavGrid_left, #packagePager_left { /* KEEPS PAGER BUTTONS THE RIGHT SIZE */
+        #pg_packagePager .ui-pg-table,
+        #pg_servernavGrid .ui-pg-table,
+        #servernavGrid_left,
+        #packagePager_left { /* KEEPS PAGER BUTTONS THE RIGHT SIZE */
             width: auto !important;
         }
 
-        /* This changes the color of the active pill */
-        .nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
-            background-color:#e9e9e9 !important;
-            color: black !important;
+        #nav > li > a {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            background-color: #767676;
+            color: black;
         }
 
-        /* This changes the color of the inactive pills */
-        .nav-pills>li>a {
-            background-color:#767676 !important;
-            color: black !important;
+        #nav > li.active > a,
+        #nav > li.active > a:hover,
+        #nav > li.active > a:focus {
+            background-color: #e9e9e9;
+            font-weight: bold;
         }
 
-        /* This changes the color of the inactive pills */
-        .nav-pills>li>a:hover, .nav-pills>li>a:focus {
-            background-color:#696969 !important;
-            color: black !important;
+        #nav > li > a:hover,
+        #nav > li > a:focus {
+            background-color: #696969;
         }
     </style>
 
@@ -242,14 +240,13 @@
             // first get the data of all of the existing pills
             // this will be used to mark which pills are kept/deleted
             var existingPills = [];
-            $(".nav-pills>li").each( function( index, element ) {
-                // use $(this)
+            $(".nav-pills > li").each( function( index, element ) {
                 var id = $(this).attr("id");
-                existingPills[existingPills.length] = id;
+                existingPills.push(id)
             });
 
             // look through the overrides list to see which are enabled/active
-            var ids = jQuery("#packages").jqGrid('getDataIDs');
+            var ids = $("#packages").jqGrid('getDataIDs');
             for (var i = 0; i < ids.length; i++) {
                 var rowdata = $("#packages").getRowData(ids[i]);
 
@@ -269,7 +266,16 @@
                         existingPills[$.inArray(rowdata.pathId, existingPills)] = -1;
                     } else {
                         // add it to the <ul> pill nav
-                        $('<li id="' + rowdata.pathId + '"><a href="#tab'+rowdata.pathId+'" data-toggle="tab">' + rowdata.pathName + '</a></li>').appendTo('#nav');
+                        $("#nav").append($("<li>")
+                            .attr("id", rowdata.pathId)
+                            .append($("<a>")
+                                .attr({
+                                    "href": "#tab" + rowdata.pathId,
+                                    "data-toggle": "tab"})
+                                .text(rowdata.pathName).
+                                click(function() {
+                                    loadPath($(this).parent().attr("id"));
+                                })))
                     }
                 }
             }
@@ -278,7 +284,6 @@
             // at this point the existingPills list is just the pills that need to be removed
             for (var x = 0; x < existingPills.length; x++) {
                 if (existingPills[x] !== -1) {
-                    //console.log(existingPills[x]);
                     $("#nav").find("#" + existingPills[x]).remove();
 
                     // reset pathToLoad if it is equal to the removed path
@@ -289,15 +294,10 @@
             }
 
             // make all pills non-active
-            $(".nav-pills>li").removeClass("active")
+            $(".nav-pills > li").removeClass("active")
 
             // make the currently selected pill active
             $("#nav").find("#" + pathToLoad).addClass("active");
-
-            // register click events on all of the nav pills to load the appropriate detail data
-            $('.nav-pills > li > a').click( function() {
-                loadPath($(this).parent().attr("id"));
-            });
 
             // load the currently selected path data
             loadPath(pathToLoad);
@@ -305,7 +305,7 @@
 
         // common function for grid reload
         function reloadGrid(gridId) {
-            jQuery(gridId).setGridParam({datatype:'json', page:1}).trigger("reloadGrid");
+            $(gridId).setGridParam({datatype:'json', page:1}).trigger("reloadGrid");
         }
 
         function responseEnabledFormatter( cellvalue, options, rowObject ) {
@@ -482,9 +482,10 @@
             'use strict';
 
             updateStatus();
-            $("#responseOverrideSelect").select2({dropdownAutoWidth : true});
-            $("#requestOverrideSelect").select2({dropdownAutoWidth : true});
+            $("#responseOverrideSelect").select2();
+            $("#requestOverrideSelect").select2();
 
+            // Tab nav
             Mousetrap.bind('1', function() {
                 $("[href=\"#tabs-1\"]").click();
             });
@@ -494,13 +495,17 @@
             Mousetrap.bind('3', function() {
                 $("[href=\"#tabs-3\"]").click();
             });
+            // Filter
+            Mousetrap.bind('f', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                $("#gs_pathName").focus();
+            })
 
 
 
-            var serverList = jQuery("#serverlist");
-            var initServerWidth = 0;
-            serverList.jqGrid({
-                autowidth : false,
+            $("#serverlist").jqGrid({
+                autowidth : true,
                 caption : 'API Servers',
                 cellEdit : true,
                 cellurl : '/testproxy/api/edit/server',
@@ -533,7 +538,7 @@
                     width : 160,
                     editable : true,
                     edittype:"text",
-                    editrules:{required:true, custom:true, custom_func: srcValidation},
+                    editrules: {required: true},
                     formoptions:{label: "Source Hostname/IP (*)"}
                 }, {
                     name : 'destUrl',
@@ -559,36 +564,33 @@
                 },
                 afterEditCell : function(rowid, cellname, value, iRow, iCol) {
                     if (cellname == "srcUrl") {
-                        serverList.setGridParam({
+                        $("#serverlist").setGridParam({
                             cellurl : '<c:url value="/api/edit/server/"/>' + rowid
                                     + '/src'
                         });
                     } else if (cellname == "destUrl") {
-                        serverList.setGridParam({
+                        $("#serverlist").setGridParam({
                             cellurl : '<c:url value="/api/edit/server/"/>' + rowid
                                     + '/dest'
                         });
                     } else if (cellname == "hostHeader") {
-                        serverList.setGridParam({
+                        $("#serverlist").setGridParam({
                             cellurl : '<c:url value="/api/edit/server/"/>' + rowid
                                     + '/host'
                         });
                     }
                 },
                 afterSaveCell : function() {
-                    serverList.trigger("reloadGrid");
+                    $("#serverlist").trigger("reloadGrid");
                 },
                 loadComplete: function(data) {
                     // hide host enable/disable if host editor is not available
                     if (data.hostEditor == false) {
-                        serverList.hideCol("hostsEntry.enabled");
+                        $("#serverlist").hideCol("hostsEntry.enabled");
                     }
                 },
-                gridComplete: function() {
-                    initServerWidth = serverList.jqGrid('getGridParam', 'width');
-                },
                 datatype : "json",
-                height: "100%",
+                height: "auto",
                 hiddengrid: false,
                 loadonce: true,
                 pager : '#servernavGrid',
@@ -601,7 +603,7 @@
                 url : '<c:url value="/api/edit/server?profileId=${profile_id}&clientUUID=${clientUUID}"/>',
                 viewrecords : true
             });
-            serverList.jqGrid('navGrid', '#servernavGrid', {
+            $("#serverlist").jqGrid('navGrid', '#servernavGrid', {
                 edit : false,
                 add : true,
                 del : true,
@@ -618,25 +620,13 @@
                 topinfo:"Fields marked with a (*) are required.",
                 width: 400,
                 beforeShowForm: function(formid) {
-                    /* CREATE PLACEHOLDERS FOR ADD FORM. */
-                    /* INITIALLY, GRAY */
-                    $("#srcUrl").val(getExampleText("src"));
-                    $("#srcUrl").css("color", "gray");
+                    $("#srcUrl").attr("placeholder", getExampleText("src"));
                 },
                 afterShowForm: function(formid) {
                     /* SHIFT INITIAL FOCUS TO CANCEL TO MINIMIZE ACCIDENTAL CREATION OF
                         INCORRECT HOSTNAME.
                      */
                     $("#cData").focus();
-
-                    var src = true;
-                    $("#srcUrl").focus(function(){
-                        if( src ) {
-                            $("#srcUrl").val("");
-                            $("#srcUrl").css("color", "black");
-                            src = false;
-                        }
-                    });
                 },
                 afterSubmit: function () {
                     reloadGrid("#serverlist");
@@ -652,11 +642,9 @@
                     return [true];
                 }
             });
-            serverList.jqGrid('gridResize');
 
-            var serverGroupList = jQuery("#serverGroupList");
-            serverGroupList.jqGrid({
-                autowidth : false,
+            $("#serverGroupList").jqGrid({
+                autowidth : true,
                 cellEdit : true,
                 colNames : [ 'ID', 'Name'],
                 colModel : [ {
@@ -682,13 +670,12 @@
                 afterEditCell : function(rowid, cellname, value, iRow, iCol) {
                     if (cellname == "name") {
                         editServerGroupId = rowid;
-                        serverGroupList.setGridParam({
+                        $("#serverGroupList").setGridParam({
                             cellurl : '<c:url value="/api/servergroup/"/>' + rowid + "?profileId=${profile_id}"
                         });
                     }
                 },
                 datatype : "json",
-                height: "auto",
                 loadonce: true,
                 pager : '#serverGroupNavGrid',
                 pgbuttons : false,
@@ -701,7 +688,7 @@
                 viewrecords : true
             });
 
-            serverGroupList.jqGrid('navGrid', '#serverGroupNavGrid', {
+            $("#serverGroupList").jqGrid('navGrid', '#serverGroupNavGrid', {
                 edit : false,
                 add : true,
                 del : true,
@@ -732,27 +719,27 @@
                 }
             },
             {});
-            serverGroupList.jqGrid('gridResize');
 
-            var grid = $("#packages");
-            var initGridWidth = 0;
-            grid.jqGrid({
-                autowidth: false,
+            $("#packages").jqGrid({
+                autowidth: true,
                 caption: "Paths",
                 cellurl : '<c:url value="/api/path?profileIdentifier=${profile_id}&clientUUID=${clientUUID}"/>',
+                colNames: ['ID', 'Path Name', 'Path', 'Type', 'Response', 'Request'],
                 colModel: [
-                    { name: 'pathId', index: 'pathId', width: "20", hidden: true},
+                    {
+                        name: 'pathId',
+                        index: 'pathId',
+                        hidden: true
+                    },
                     {
                         name: 'pathName',
                         index: 'pathName',
-                        width: "330",
+                        width: 330,
                         editrules: {
-                            required: true,
-                            custom: true,
-                            custom_func: pathNameValidation
+                            required: true
                         },
                         editable: true,
-                        formoptions:{label: "Path name (*)"}
+                        formoptions: {label: "Path name (*)"}
                     },
                     {
                         name: 'path',
@@ -761,43 +748,43 @@
                         editrules: {
                             required: true,
                             edithidden: true,
-                            custom: true,
-                            custom_func: pathValidation
                         },
                         editable: true,
-                        formoptions:{label: "Path (*)"}
+                        formoptions: {label: "Path (*)"}
                     },
-                    { name: 'requestType',
-                      index: 'requestType',
-                      align: 'center',
-                      width: 80,
-                      editable: true,
-                      edittype: 'select',
-                      editoptions: {defaultValue: 0, value: getRequestTypes()},
-                                    editrules: {edithidden: true},
-                      formatter: requestTypeFormatter
-                     }, {
-                      name: 'responseEnabled',
-                      index: 'responseEnabled',
-                      width: "60",
-                      editable: false,
-                      edittype: 'checkbox',
-                      align: 'center',
-                      editoptions: { value:"True:False" },
-                      formatter: responseEnabledFormatter,
-                      formatoptions: {disabled: false}
+                    {
+                        name: 'requestType',
+                        index: 'requestType',
+                        align: 'center',
+                        width: 80,
+                        editable: true,
+                        edittype: 'select',
+                        editoptions: {defaultValue: 0, value: getRequestTypes()},
+                        editrules: {edithidden: true},
+                        formatter: requestTypeFormatter
+                    },
+                    {
+                        name: 'responseEnabled',
+                        index: 'responseEnabled',
+                        width: "60",
+                        editable: false,
+                        edittype: 'checkbox',
+                        align: 'center',
+                        editoptions: { value: "True:False" },
+                        formatter: responseEnabledFormatter,
+                        formatoptions: {disabled: false}
                     }, {
-                      name: 'requestEnabled',
-                      index: 'requestEnabled',
-                      width: "60",
-                      editable: false,
-                      edittype: 'checkbox',
-                      align: 'center',
-                      editoptions: { value:"True:False" },
-                      formatter: requestEnabledFormatter,
-                      formatoptions: {disabled: false} }
+                        name: 'requestEnabled',
+                        index: 'requestEnabled',
+                        width: "60",
+                        editable: false,
+                        edittype: 'checkbox',
+                        align: 'center',
+                        editoptions: { value:"True:False" },
+                        formatter: requestEnabledFormatter,
+                        formatoptions: {disabled: false}
+                    }
                 ],
-                colNames: ['ID', 'Path Name', 'Path', 'Type', 'Response', 'Request'],
                 datatype: "json",
                 editUrl: '<c:url value="/api/path?profileIdentifier=${profile_id}"/>',
                 jsonReader : {
@@ -807,13 +794,12 @@
                     root : 'paths',
                     repeatitems : false
                 },
-                height: "100%",
+                height: "50vh",
                 ignoreCase: true,
                 loadonce: true,
                 onSelectRow: function (id) {
-                    var data = jQuery("#packages").jqGrid('getRowData',id);
+                    var data = $("#packages").jqGrid('getRowData',id);
                     currentPathId = data.pathId;
-
                     updateDetailPills();
                 },
                 loadComplete: function() {
@@ -829,7 +815,7 @@
                 url : '<c:url value="/api/path?profileIdentifier=${profile_id}&clientUUID=${clientUUID}"/>',
                 viewrecords: true,
             });
-            grid.jqGrid('navGrid', '#packagePager',
+            $("#packages").jqGrid('navGrid', '#packagePager',
                 {
                     add: true,
                     edit: false,
@@ -861,10 +847,10 @@
 
                         /* CREATE PLACEHOLDERS FOR ADD FORM. */
                         /* INITIALLY, GRAY */
-                        $("#pathName").val(getExampleText("pathName"));
+                        $("#pathName").attr("placeholder", getExampleText("pathName"));
                         $("#pathName").css("color", "gray");
 
-                        $("#path").val(getExampleText("path"));
+                        $("#path").attr("placeholder", getExampleText("path"));
                         $("#path").css("color", "gray");
                     },
                     afterShowForm: function(formid) {
@@ -872,24 +858,6 @@
                          INCORRECT HOSTNAME.
                          */
                         $("#cData").focus();
-
-                        var name = true;
-                        $("#pathName").focus(function(){
-                            if( name ) {
-                                $("#pathName").val("");
-                                $("#pathName").css("color", "black");
-                                name = false;
-                            }
-                        });
-
-                        var path = true;
-                        $("#path").focus(function(){
-                            if( path ) {
-                                $("#path").val("");
-                                $("#path").css("color", "black");
-                                path = false;
-                            }
-                        });
                     },
                 },
                 {
@@ -900,13 +868,16 @@
                      rp_ge.url = '<c:url value="/api/path/" />' + currentPathId + "?clientUUID=" + clientUUID;
                     }},
                 {});
-            grid.jqGrid('gridResize');
-            grid.jqGrid('filterToolbar', { defaultSearch: 'cn', stringResult: true });
+            $("#packages").jqGrid('filterToolbar', {
+                defaultSearch: 'cn',
+                stringResult: true,
+                searchOnEnter: false,
+            });
 
             var options = {
                 update: function(event, ui) {
                     var pathOrder = "";
-                    var paths = grid.jqGrid('getRowData');
+                    var paths = $("#packages").jqGrid('getRowData');
                     for( var i = 0; i < paths.length; i++ ) {
                         if( i === paths.length - 1 ) {
                             pathOrder += paths[i]["pathId"];
@@ -928,7 +899,7 @@
             };
 
             var sortableAllowed = false;
-            grid.jqGrid('navButtonAdd', '#packagePager', {
+            $("#packages").jqGrid('navButtonAdd', '#packagePager', {
                 caption: "Reorder",
                 buttonicon: "ui-icon-carat-2-n-s",
                 title: "Toggle Reorder Path Priority",
@@ -938,7 +909,7 @@
 
                     if( sortableAllowed ) {
                         /* ALLOWS THE PATH PRIORITY TO BE SET INSIDE OF THE PATH TABLE, INSTEAD OF ON A SEPARATE PAGE */
-                        grid.jqGrid('sortableRows', options);
+                        $("#packages").jqGrid('sortableRows', options);
                         $("#reorder_packages").addClass("ui-state-highlight");
                         /* GIVE HELPER TEXT*/
                         $("#reorderNotificationText").html("Drag and drop rows to change the path priority.<br>The ordering of paths impacts how requests are handled. <br>In general if a higher priority path matches a request then<br>further paths will not be evaluated. <br>The only exception is Global paths. In the case that a global path<br>is matched the matcher will continue to search for a non-global<br>matching path.");
@@ -952,8 +923,7 @@
                 }
             });
 
-            var group = $("#groupTable");
-            group.jqGrid({
+            $("#groupTable").jqGrid({
                 url : '<c:url value="/api/group"/>',
                 width: 300,
                 height: 190,
@@ -974,7 +944,7 @@
                     width: 200,
                     editable: true,
                     align: 'left'
-                }],
+                } ],
                 jsonReader : {
                     page : "page",
                     total : "total",
@@ -986,7 +956,7 @@
                 cellurl : '/testproxy/api/group',
                 gridComplete : function() {
                     if($("#groupsTable").length > 0){
-                        jQuery("#groupsTable").setSelection(
+                        $("#groupsTable").setSelection(
                                 $("#groupsTable").getDataIDs()[0], true);
                     }
                 },
@@ -997,23 +967,31 @@
                 viewrecords : true,
                 sortorder : "asc"
             });
-            group.jqGrid('gridResize');
 
-            /* ADD PLACEHOLDER TO FILTER BAR */
-            $("#gs_pathName").val("Type here to filter columns.");
-            $("#gs_pathName").focus(function() {
-                $("#gs_pathName").val("");
+            // bind window resize to fix grid width
+            $(window).bind('resize', function() {
+                $("#serverlist").setGridWidth($("#listContainer").width());
+                $("#packages").setGridWidth($("#listContainer").width());
             });
 
+            $("#gs_pathName").attr("placeholder", "Type here to filter columns (f)");
+
             $("#tabs").tabs();
-            $("#tabs").css("overflow", "auto");
-            $("#tabs").css("min-height", "500px");
-            $("#tabs").css("resize", "both");
             $("#sel1").select2();
 
-            var currentHTML = $("#gview_serverlist > .ui-jqgrid-titlebar > span").html();
-            var dropDown = "&nbsp;&nbsp;&nbsp;<input id='serverGroupSelection' style='width:300px%'></input>&nbsp;&nbsp;<button id='editServerGroups' type='button' class='btn btn-xs' onClick='toggleServerGroupEdit()'>Server Groups ></button>";
-            $("#gview_serverlist > .ui-jqgrid-titlebar > span").html(currentHTML + dropDown);
+            $("#gview_serverlist .ui-jqgrid-titlebar")
+                .append($("<input>")
+                    .attr("id", "serverGroupSelection")
+                    .attr("style", "width: 50%;"))
+                .append($("<button>")
+                    .attr({
+                        type: "button",
+                        id: "editServerGroups",
+                        class: "btn btn-xs"
+                    })
+                    .on("click", toggleServerGroupEdit)
+                    .text("Server Groups")
+                    .append($("<span>").addClass("glyphicon glyphicon-chevron-right")));
 
             $("#serverGroupSelection").select2({
                 initSelection: function(element, callback){
@@ -1077,11 +1055,11 @@
             populateGroups();
 
         });
-        jQuery("#packages").jqGrid('navGrid','#packages',{
-            edit:false,
-            add:true,
-            del:true,
-            search:false
+        $("#packages").jqGrid('navGrid','#packages',{
+            edit: false,
+            add: true,
+            del: true,
+            search: false
         });
         loadPath(currentPathId);
 
@@ -1095,30 +1073,6 @@
                     return "ex. /http500, /(a|b)"
                 default:
                     return null;
-            }
-        }
-
-        function srcValidation(val, colname) {
-            if( val.trim() === getExampleText("src") ) {
-                return [false, "Please replace the example source hostname with a valid hostname."]
-            } else {
-                return [true, ""];
-            }
-        }
-
-        function pathNameValidation(val, colname) {
-            if( val.trim() === getExampleText("pathName") ) {
-                return [false, "Please replace the example path name with a valid name."]
-            } else {
-                return [true, ""];
-            }
-        }
-
-        function pathValidation(val, colname) {
-            if( val.trim() === getExampleText("path") ) {
-                return [false, "Please replace the example path with a valid hostname."]
-            } else {
-                return [true, ""];
             }
         }
 
@@ -1735,7 +1689,6 @@
                     });
 
                     $("#responseOverrideEnabled").html(content);
-                    $("#responseOverrideEnabled").css("resize", "both");
 
                     if(selectedResponseOverride != 0) {
                         $("#responseOverrideEnabled").val(selectedResponseOverride);
@@ -1806,7 +1759,6 @@
                     });
 
                     $("#requestOverrideEnabled").html(content);
-                    $("#requestOverrideEnabled").css("resize", "both");
 
                     if(selectedRequestOverride != 0) {
                         $("#requestOverrideEnabled").val(selectedRequestOverride);
@@ -1816,18 +1768,15 @@
             });
         }
 
-        function populateRequestOverrideList(possibleEndpoints) {
-            var content = "";
-            content += '<option value="-999" selected>Select Override</option>';
-
-            content += '<optgroup label="General">';
-                    content += '<option value="-2">Custom Request</option>';
-                    content += '<option value="-5">Set Header</option>';
-                    content += '<option value="-6">Remove Header</option>';
-            content += '<option value="-7">Custom Post Body</option>';
-            content += '</optgroup>';
-
-            $("#requestOverrideSelect").html(content);
+        function populateRequestOverrideList() {
+            $("#requestOverrideSelect")
+                .empty()
+                .append($("<option>").val("-999").attr("selected", "selected").text("Select Override"))
+                .append($("<optgroup>").attr("label", "General")
+                    .append($("<option>").val("-2").text("Custom Request"))
+                    .append($("<option>").val("-5").text("Set Header"))
+                    .append($("<option>").val("-6").text("Remove Header"))
+                    .append($("<option>").val("-7").text("Custom Post Body")));
         }
 
         function toggleServerGroupEdit(){
@@ -1915,17 +1864,13 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div id="" class="col-xs-5">
-                <div>
-                    <table id="serverlist"></table>
-                    <div id="servernavGrid"></div>
-                </div>
-                <div>
-                    <table id="packages">
-                        <tr><td></td></tr>
-                    </table>
-                    <div id="packagePager" >
-                    </div>
+            <div id="listContainer" class="col-xs-5">
+                <table id="serverlist"></table>
+                <div id="servernavGrid"></div>
+                <table id="packages">
+                    <tr><td></td></tr>
+                </table>
+                <div id="packagePager">
                 </div>
                 <!-- div for top bar notice -->
                 <div class="ui-widget" id="statusNotificationDiv" style="display: none;" onClick="dismissStatusNotificationDiv()">
@@ -1943,15 +1888,16 @@
             </div>
 
             <div id="details" data-spy="affix" class="col-xs-7">
-                <div class="serverGroupEdit" id="serverEdit">
-                    <div>
-                        <h2><span class="label label-default" >Edit Server Groups</span></h2>
+                <div class="panel panel-default" id="serverEdit">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">Edit Server Groups</h2>
                     </div>
-                    <div>
+                    <div class="panel-body">
                         <table id="serverGroupList"></table>
                         <div id="serverGroupNavGrid"></div>
                     </div>
                 </div>
+
 
                 <div class="detailsView" id="editDiv">
                     <div>
