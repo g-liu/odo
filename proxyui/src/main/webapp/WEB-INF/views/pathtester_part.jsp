@@ -49,19 +49,25 @@ function navigatePathTester() {
 <!-- Hidden div for path tester -->
 <div id="pathTesterDialog" style="display:none;">
     <table>
-    <tr><td>
-        URL to Test: <input id="pathTesterURL" size=45/>&nbsp;
-    </td><td>
-        <select id="pathTesterRequestType" class="form-control" style="width:auto;">
-            <option value="0">ALL</option>
-            <option value="1">GET</option>
-            <option value="2">PUT</option>
-            <option value="3">POST</option>
-            <option value="4">DELETE</option>
-        </select>
-    </td><td>
-        <button class="btn btn-primary" onclick="pathTesterSubmit()">Test</button>
-    </td></table>
+        <tr>
+            <td>
+                <label for="pathTesterURL">URL to Test:</label>
+                <input id="pathTesterURL" size=45 />
+            </td>
+            <td>
+                <select id="pathTesterRequestType" class="form-control" style="width:auto;">
+                    <option value="0">ALL</option>
+                    <option value="1">GET</option>
+                    <option value="2">PUT</option>
+                    <option value="3">POST</option>
+                    <option value="4">DELETE</option>
+                </select>
+            </td>
+            <td>
+                <button class="btn btn-primary" onclick="pathTesterSubmit()">Test</button>
+            </td>
+        </tr>
+    </table>
     <div class="ui-widget">
         <div class="ui-state-highlight ui-corner-all">
             <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
@@ -69,4 +75,4 @@ function navigatePathTester() {
         </div>
     </div>
     <div id="pathTesterResults"></div>
-</div>
+</div><!-- /#pathTesterDialog -->
