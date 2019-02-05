@@ -491,6 +491,12 @@
                 event.stopPropagation();
                 $("#gs_pathName").focus();
             });
+            // Add override
+            Mousetrap.bind('o', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                $("#tabs-1:visible #responseOverrideSelect, #tabs-2:visible #requestOverrideSelect").first().select2("open");
+            });
 
             $("#serverlist").jqGrid({
                 autowidth : true,
@@ -1249,7 +1255,7 @@
             });
         }
 
-        function changeResponseOverrideDiv() {
+        function changeResponseOverrideDiv(autofocusOnForm) {
             var selections = $("select#responseOverrideEnabled option:selected");
 
             if (selections.length > 1) {
@@ -1262,7 +1268,7 @@
                 var splitId = id.split(",");
                 var methodId = splitId[0];
                 var ordinal = splitId[1];
-                var argContent = editEndpointArgs(currentPathId, methodId, ordinal, "response");
+                populateEditOverrideArgs(currentPathId, methodId, ordinal, "response", autofocusOnForm);
             }
             else {
                 // nothing selected
@@ -1272,11 +1278,11 @@
             }
         }
 
-        function changeRequestOverrideDiv() {
+        function changeRequestOverrideDiv(autofocusOnForm) {
             var selections = $("select#requestOverrideEnabled option:selected");
 
             if (selections.length > 1) {
-                $("#requestOverrideParameters").html("");
+                $("#requestOverrideParameters").empty();
                 $("#requestOverrideDetails").hide();
                 selectedRequestOverride = 0;
             } else if (selections.length == 1) {
@@ -1285,12 +1291,12 @@
                 var splitId = id.split(",");
                 var methodId = splitId[0];
                 var ordinal = splitId[1];
-                var argContent = editEndpointArgs(currentPathId, methodId, ordinal, "request");
+                populateEditOverrideArgs(currentPathId, methodId, ordinal, "request", autofocusOnForm);
             }
             else {
                 // nothing selected
                 selectedRequestOverride = 0;
-                $("#requestOverrideParameters").html("");
+                $("#requestOverrideParameters").empty();
                 $("#requestOverrideDetails").hide();
             }
         }
@@ -1357,7 +1363,7 @@
                     url: '<c:url value="/api/path/"/>' + currentPathId,
                     data: ({addOverride : selected.value, clientUUID: clientUUID}),
                     success: function() {
-                        populateEnabledOverrides();
+                        populateEnabledOverrides(true);
                         if(enabledCount == 0) {
                             // automatically enable the response if a first override is added
                             if($("#" + type + "_enabled_" + currentPathId).attr("checked") != "checked") {
@@ -1443,7 +1449,7 @@
         }
 
         // called to load the edit endpoint args
-        function editEndpointArgs(pathId, methodId, ordinal, type) {
+        function populateEditOverrideArgs(pathId, methodId, ordinal, type, autofocusOnForm) {
             $.ajax({
                 type: "GET",
                 url: '<c:url value="/api/path/"/>' + pathId + '/' + methodId,
@@ -1480,9 +1486,9 @@
                             $formDiv
                                 .append($("<textarea>")
                                     .attr({
-                                        "id": inputId,
-                                        "class": "form-control",
-                                        "rows": 10
+                                        id: inputId,
+                                        class: "form-control",
+                                        rows: 10
                                     })
                                     .text(inputValue))
                                 .append($("<label>")
@@ -1539,6 +1545,13 @@
 
                     $("#" + type + "OverrideParameters").empty().append($formData).show();
                     $("#" + type + "OverrideDetails").show();
+
+                    if (autofocusOnForm === true) {
+                        $("#" + type + "OverrideDetails form")
+                            .find("input, textarea")
+                            .first()
+                            .focus();
+                    }
                 }
             });
         }
@@ -1631,16 +1644,17 @@
             });
         }
 
-        function populateEnabledOverrides() {
-            populateEnabledResponseOverrides();
-            populateEnabledRequestOverrides();
+        function populateEnabledOverrides(autofocusOnForm) {
+            populateEnabledResponseOverrides(autofocusOnForm);
+            populateEnabledRequestOverrides(autofocusOnForm);
         }
 
-        function populateEnabledResponseOverrides() {
+        function populateEnabledResponseOverrides(autofocusOnForm) {
 
             $.ajax({
                 type:"GET",
                 url : '<c:url value="/api/path/"/>' + currentPathId + '?profileIdentifier=${profile_id}&typeFilter[]=ResponseOverride&typeFilter[]=ResponseHeaderOverride&clientUUID=${clientUUID}',
+                autofocusOnForm: autofocusOnForm,
                 success: function(data) {
                     var content = "";
                     var usedIndexes = {};
@@ -1702,15 +1716,16 @@
                     if(selectedResponseOverride != 0) {
                         $("#responseOverrideEnabled").val(selectedResponseOverride);
                     }
-                    changeResponseOverrideDiv();
+                    changeResponseOverrideDiv(this.autofocusOnForm);
                 }
             });
         }
 
-        function populateEnabledRequestOverrides(enabledEndpoints, possibleEndpoints) {
+        function populateEnabledRequestOverrides(autofocusOnForm) {
             $.ajax({
                 type:"GET",
                 url : '<c:url value="/api/path/"/>' + currentPathId + '?profileIdentifier=${profile_id}&typeFilter[]=RequestOverride&typeFilter[]=RequestHeaderOverride&clientUUID=${clientUUID}',
+                autofocusOnForm: autofocusOnForm,
                 success: function(data) {
                     var content = "";
                     var usedIndexes = {};
@@ -1772,7 +1787,7 @@
                     if(selectedRequestOverride != 0) {
                         $("#requestOverrideEnabled").val(selectedRequestOverride);
                     }
-                    changeRequestOverrideDiv();
+                    changeRequestOverrideDiv(this.autofocusOnForm);
                 }
             });
         }
@@ -1937,7 +1952,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="responseOverrideSelect">Add override</label>
+                                                <label for="responseOverrideSelect">Add override <kbd>o</kbd></label>
                                                 <br />
                                                 <select id="responseOverrideSelect" style="width: 100%;" onfocus="this.selectedIndex = -999;" onChange="overrideSelectChanged('response')">
                                                     <option value="-999">Select Override</option>
@@ -1975,7 +1990,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="requestOverrideSelect">Add override</label>
+                                                <label for="requestOverrideSelect">Add override <kbd>o</kbd></label>
                                                 <br />
                                                 <select id="requestOverrideSelect" onfocus="this.selectedIndex = -999;" style="width: 100%;" onChange="overrideSelectChanged('request')">
                                                     <option value="-999">Select Override</option>
