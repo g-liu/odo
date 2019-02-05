@@ -83,33 +83,40 @@
         }
 
         function updateStatus() {
-            var status = $("#status");
-            if (${isActive} == true) {
-                status.html('<button id="make_active" class="btn btn-default" onclick="changeActive(\'false\')">Deactivate Profile</button>');
-            } else {
-                status.html('<button id="make_active" class="btn btn-danger" onclick="changeActive(\'true\')">Activate Profile</button>');
-            }
+            var active = ${isActive};
+
+            $("#status")
+                .empty()
+                .append($("<button>")
+                    .addClass("btn")
+                    .addClass(active ? "btn-default" : "btn-danger")
+                    .attr("id", "make_active")
+                    .text((active ? "Deactivate" : "Activate") + " Profile")
+                    .click(changeActive.bind(!!active)));
 
             // set client ID information
-            var clientInfo = $("#clientInfo");
-            var clientInfoHTML = "";
-            if (clientUUID == '-1') {
-                clientInfoHTML = "<li id='clientButton'><a href='#' data-toggle='tooltip' data-placement='bottom' title='Click here to manage clients.' onclick='manageClientPopup()'>Client UUID: Default</a>";
-            } else {
-                clientInfoHTML = "<li id='clientButton'><a href='#' data-toggle='tooltip' data-placement='bottom' title='Click here to manage clients.' onclick='manageClientPopup()'>Client UUID: " + clientUUID + "</a>";
-            }
-
-            clientInfoHTML += '</ul></li>'
-            clientInfo.html(clientInfoHTML);
+            $("#clientInfo")
+                .empty()
+                .append($("<li>").attr("id", "clientButton")
+                    .append($("<a>")
+                        .attr({
+                            href: "#",
+                            "data-toggle": "tooltip",
+                            "data-placement": "bottom",
+                            title: "Click here to manage clients.",
+                        })
+                        .text("Client UUID: " + (clientUUID == "-1" ? "Default" : clientUUID))
+                        .click(manageClientPopup)))
         }
 
         function changeActive(value) {
             $.ajax({
-                type:"POST",
+                type: "POST",
                 url: '<c:url value="/api/profile/${profile_id}/clients/${clientUUID}"/>',
                 data: "active=" + value,
-                success: function(){
-                    window.location.reload();
+                success: window.location.reload,
+                error: function() {
+                    alert("Unable to " + (value ? "de" : "") + "activate the profile.");
                 }
             });
         }
@@ -118,15 +125,12 @@
             $("#configurationUploadDialog").dialog({
                 title: "Upload Active Override & Server Configuration",
                 modal: true,
-                width: 500,
-                height: 200,
-                position:['top',20],
+                width: 400,
                 buttons: {
-                    "Submit": function() {
-                        // submit form
-                        $("#configurationUploadFileButton").click();
+                    Submit: function() {
+                        $("#configurationUploadForm").submit();
                     },
-                    "Cancel": function() {
+                    Cancel: function() {
                         $("#configurationUploadDialog").dialog("close");
                     }
                 }
@@ -140,27 +144,20 @@
         function importConfigurationRequest(file) {
             downloadFile('<c:url value="/api/backup/profile/${profile_id}/${clientUUID}?oldExport=true"/>');
             var formData = new FormData();
-            if ($('#includeOdoConfiguration').find(":selected").text() === "No") {
-                formData.append('odoImport', false);
-            } else {
-                formData.append('odoImport', true);
-            }
+            formData.append('odoImport', $('[name="IncludeOdoConfiguration"]').is(":checked"));
             formData.append('fileData', file, file.name);
             $.ajax({
-                type:"POST",
+                type: "POST",
                 url: '<c:url value="/api/backup/profile/${profile_id}/${clientUUID}"/>',
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(){
+                success: function() {
                     window.location.reload();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     var errorResponse = JSON.parse(jqXHR.responseText);
-                    var alertText = "";
-                    for (i = 0; i < errorResponse.length; i++) {
-                        alertText += errorResponse[i].error + "\n";
-                    }
+                    var alertText = errorResponse.join("\n");
                     window.alert(alertText);
                     $("#configurationUploadDialog").dialog("close");
                 }
@@ -443,7 +440,7 @@
             $('#configurationUploadForm').submit(function(event) {
                 event.preventDefault();
 
-                var file = $("#configurationUploadFile").files[0];
+                var file = $("#configurationUploadFile").get(0).files[0];
                 importConfigurationRequest(file);
             });
 
@@ -1881,14 +1878,14 @@
     <!-- Hidden div for configuration file upload -->
     <div id="configurationUploadDialog" style="display:none;">
         <form id="configurationUploadForm">
-            <input id="configurationUploadFile" type="file" name="fileData" />
-            <br>
-            <label for="includeOdoConfiguration">Also Import Odo Configuration</label>
-            <select id="includeOdoConfiguration" name="IncludeOdoConfiguration">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-            </select>
-            <button id="configurationUploadFileButton" type="submit" style="display: none;"></button>
+            <div class="form-group">
+                <label for="configurationUploadFile">Configuration file:</label>
+                <input id="configurationUploadFile" class="form-control" type="file" accept=".json,application/json" name="fileData" />
+            </div>
+            <div class="form-group form-check">
+                <label for="includeOdoConfiguration" class="form-check-label">Also Import Odo Configuration</label>
+                <input id="includeOdoConfiguration" type="checkbox" class="form-check-input" name="IncludeOdoConfiguration" />
+            </div>
         </form>
     </div>
 
@@ -2050,7 +2047,7 @@
 
                         <div id="tabs-3" class="container-flex">
                             <form onsubmit="applyGeneralPathChanges();">
-                                <div class="form-group row">
+                                <div class="form-group form-check row">
                                     <label for="pathGlobal" class="col-sm-3 form-check-label mousetrap">Global?</label>
                                     <div class="col-sm-9">
                                         <input id="pathGlobal" type="checkbox" class="form-check-input" />

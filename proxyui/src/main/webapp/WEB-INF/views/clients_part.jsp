@@ -55,6 +55,11 @@ function manageClientPopup() {
         resizeable: true,
         width: 'auto',
         height: 'auto',
+        buttons: {
+            "Close": function() {
+                $("#changeClientDialog").dialog("close");
+            }
+        }
     });
 }
 
