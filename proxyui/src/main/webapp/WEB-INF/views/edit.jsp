@@ -510,9 +510,7 @@
                 event.preventDefault();
                 event.stopPropagation();
                 $("#gs_pathName").focus();
-            })
-
-
+            });
 
             $("#serverlist").jqGrid({
                 autowidth : true,
@@ -819,7 +817,7 @@
                     root : 'paths',
                     repeatitems : false
                 },
-                height: "50vh",
+                height: "auto",
                 ignoreCase: true,
                 loadonce: true,
                 onSelectRow: function (id) {
@@ -1110,6 +1108,11 @@
                     }
                 }
             });
+
+            // temporary kludge to get the sizes right
+            setTimeout(function() {
+                $("#serverlist").setGridWidth($("#listContainer").width());
+            }, 100);
         });
 
         function getExampleText(item) {
