@@ -1833,14 +1833,11 @@
         }
 
         function toggleServerGroupEdit() {
-            if($('#serverEdit').is(':visible') ) {
-                $("#serverEdit").hide();
-                $("#editServerGroups").attr("class", "btn-xs btn-default");
-            } else {
-                reloadGrid("#serverGroupList");
-                $("#serverEdit").show();
-                $("#editServerGroups").attr("class", "btn-xs btn-primary");
-            }
+            $("#serverEdit").dialog({
+                title: "Server Groups",
+                width: 400,
+                modal: true
+            });
         }
 
         function highlightSelectedGroups(groupIds) {
@@ -1942,19 +1939,8 @@
             </div>
 
             <div id="details" data-spy="affix" class="col-xs-7">
-                <div class="panel panel-default" id="serverEdit">
-                    <div class="panel-heading">
-                        <h2 class="panel-title">Edit Server Groups</h2>
-                    </div>
-                    <div class="panel-body">
-                        <table id="serverGroupList"></table>
-                        <div id="serverGroupNavGrid"></div>
-                    </div>
-                </div>
-
-
                 <div class="detailsView" id="editDiv">
-                    <div>
+                    <div style="position: relative;">
                         <ul class="nav nav-pills" id="nav">
                         </ul>
                         <div style="position: absolute; right: 1em; top: 0;">
@@ -2126,6 +2112,13 @@
                     </div>
                 </div><!-- /#editDiv -->
             </div><!-- /#details -->
+        </div>
+    </div>
+
+    <div class="panel panel-default" id="serverEdit" style="display: none;">
+        <div class="panel-body">
+            <table id="serverGroupList"></table>
+            <div id="serverGroupNavGrid"></div>
         </div>
     </div>
 </body>
