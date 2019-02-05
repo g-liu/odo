@@ -499,6 +499,14 @@
                 event.preventDefault();
                 $("#gs_pathName").focus();
             });
+            // Active paths navigation
+            Mousetrap.bind('alt+right', function(event) {
+                $("#nav .active").next().find("a").click();
+            });
+            Mousetrap.bind('alt+left', function(event) {
+                $("#nav .active").prev().find("a").click();
+            });
+            // Overrides navigation
             Mousetrap.bind('+', function(event) {
                 event.preventDefault();
                 $("#tabs-1:visible #responseOverrideSelect, #tabs-2:visible #requestOverrideSelect").first().select2("open");
@@ -1143,43 +1151,45 @@
         function loadPath(pathId) {
             if(pathId < 0) {
                 $("#editDiv").hide();
+                return;
             }
-            else {
-                $.ajax({
-                    type:"GET",
-                    url: '<c:url value="/api/path/"/>' + pathId,
-                    data: 'clientUUID=${clientUUID}',
-                    success: function(data){
 
-                        // populate Configuration values
-                        $("#editDiv").show();
-                        $("#pathName").attr("value", data.pathName);
-                        $("#pathValue").attr("value", data.path);
-                        $("#contentType").attr("value", data.contentType);
-                        $("#pathGlobal").attr("checked", data.global);
-                        $("#requestType").val(data.requestType);
-                        $("#postBodyFilter").val(data.bodyFilter);
-                        $("#pathRepeatCount").attr("value", data.repeatNumber);
-                        $("#pathResponseCode").attr("value", data.responseCode);
-                        pathRequestTypeChanged();
-                        $("#title").html(data.pathName);
+            $.ajax({
+                type:"GET",
+                url: '<c:url value="/api/path/"/>' + pathId,
+                data: 'clientUUID=${clientUUID}',
+                success: function(data){
 
-                        $("#responseOverrideDetails").hide();
-                        $("#requestOverrideDetails").hide();
-                        currentPathId = pathId;
-                        highlightSelectedGroups(data.groupIds);
-                        populateResponseOverrideList(data.possibleEndpoints);
-                        populateRequestOverrideList(data.possibleEndpoints);
-                        populateEnabledOverrides();
-                        changeResponseOverrideDiv();
-                        changeRequestOverrideDiv();
+                    // populate Configuration values
+                    $("#editDiv").show();
+                    $("#pathName").attr("value", data.pathName);
+                    $("#pathValue").attr("value", data.path);
+                    $("#contentType").attr("value", data.contentType);
+                    $("#pathGlobal").attr("checked", data.global);
+                    $("#requestType").val(data.requestType);
+                    $("#postBodyFilter").val(data.bodyFilter);
+                    $("#pathRepeatCount").attr("value", data.repeatNumber);
+                    $("#pathResponseCode").attr("value", data.responseCode);
+                    pathRequestTypeChanged();
+                    $("#title").html(data.pathName);
 
-                        // reset informational divs
-                        $('#applyPathChangeSuccessDiv').css('display', 'none');
-                        $('#applyPathChangeAlertDiv').css('display', 'none');
-                    }
-                });
-            }
+                    $("#responseOverrideDetails").hide();
+                    $("#requestOverrideDetails").hide();
+                    currentPathId = pathId;
+                    highlightSelectedGroups(data.groupIds);
+                    populateResponseOverrideList(data.possibleEndpoints);
+                    populateRequestOverrideList(data.possibleEndpoints);
+                    populateEnabledOverrides();
+                    changeResponseOverrideDiv();
+                    changeRequestOverrideDiv();
+
+                    $("#responseOverrideEnabled:visible, #requestOverrideEnabled:visible").first().focus();
+
+                    // reset informational divs
+                    $('#applyPathChangeSuccessDiv').hide();
+                    $('#applyPathChangeAlertDiv').hide();
+                }
+            });
         }
 
         function pathRequestTypeChanged() {
@@ -1589,8 +1599,8 @@
             var groupArray = $("#groupTable").jqGrid("getGridParam", "selarrrow");
 
             // reset informational divs
-            $('#applyPathChangeSuccessDiv').css('display', 'none');
-            $('#applyPathChangeAlertDiv').css('display', 'none');
+            $('#applyPathChangeSuccessDiv').hide();
+            $('#applyPathChangeAlertDiv').hide();
 
             $.ajax({
                 type: "POST",
@@ -1598,10 +1608,10 @@
                 url: '<c:url value="/api/path/"/>' + currentPathId,
                 data: ({clientUUID: "${clientUUID}", pathName: pathName, path: path, bodyFilter: bodyFilter, contentType: contentType, repeatNumber: repeat, requestType: requestType, global: global, responseCode: code, 'groups[]': groupArray}),
                 success: function() {
-                    $('#applyPathChangeSuccessDiv').css('display', '');
+                    $('#applyPathChangeSuccessDiv').show();
                 },
                 error: function(jqXHR) {
-                    $('#applyPathChangeAlertDiv').css('display', '');
+                    $('#applyPathChangeAlertDiv').show();
                     $('#applyPathChangeAlertTextDiv').html(jqXHR.responseText);
                 }
             });
@@ -1947,6 +1957,9 @@
                     <div>
                         <ul class="nav nav-pills" id="nav">
                         </ul>
+                        <div style="position: absolute; right: 1em; top: 0;">
+                            <kbd>alt</kbd> <kbd>&larr;</kbd> <kbd>&rarr;</kbd>
+                        </div>
                     </div>
                     <div id="tabs">
                         <ul>
