@@ -75,10 +75,6 @@
             window.location = '<c:url value='/profiles'/>';
         }
 
-        function navigatePathPriority() {
-            window.location = '<c:url value = '/pathorder/${profile_id}'/>';
-        }
-
         function updateStatus() {
             var status = $("#status");
             if (${isActive} == true) {
@@ -184,17 +180,6 @@
                         // just reload
                         window.location.reload();
                     }
-                }
-            });
-        }
-
-        function deleteServer(id) {
-            $.ajax({
-                type: 'POST',
-                url: '<c:url value="/api/edit/server/"/>' + id,
-                data: ({_method: 'DELETE'}),
-                success: function(){
-
                 }
             });
         }
@@ -378,10 +363,6 @@
             });
         }
 
-        function getRequestTypes() {
-            return "0:ALL;1:GET;2:PUT;3:POST;4:DELETE";
-        }
-
         var currentServerId = -1;
         function serverIdFormatter(cellvalue, options, rowObject) {
             currentServerId = cellvalue;
@@ -409,46 +390,45 @@
 
         // formats the enable/disable check box
         function serverEnabledFormatter(cellvalue, options, rowObject) {
-            var checkedValue = 0;
-            if (cellvalue == true) {
-                checkedValue = 1;
-            }
-
-            var newCellValue = '<input id="serverEnabled_' + currentServerId + '" onChange="serverEnabledChanged(' + currentServerId + ')" type="checkbox" offval="0" value="' + checkedValue + '"';
-
-            if (checkedValue == 1) {
-                newCellValue += 'checked="checked"';
-            }
-
-            newCellValue += '>';
-
-            return newCellValue;
+            var checkedValue = cellvalue ? 1 : 0;
+            return $("<div>").append($("<input>")
+                .attr({
+                    id: "serverEnabled_" + currentServerId,
+                    onchange: "serverEnabledChanged(" + currentServerId + ")",
+                    type: "checkbox",
+                    offval: "0",
+                    checked: checkedValue == 1 ? "checked" : ""
+                })
+                .val(checkedValue))
+                .html();
         }
 
         // format button to download a server certificate
         function certDownloadButtonFormatter(cellvalue, options, rowObject) {
-            var format = "<button type='button' class='btn btn-xs' onclick='downloadCert(\"" + rowObject.srcUrl + "\")'><span class='glyphicon glyphicon-download'></span></button>";
-            return format;
+            return $("<div>").append($("<button>")
+                .addClass("btn btn-xs")
+                .attr("onclick", "downloadCert(\"" + rowObject.srcUrl + "\")")
+                .append($("<span>").addClass("glyphicon glyphicon-download")))
+            .html();
         }
-
 
         function downloadCert(serverHost) {
             window.location = '<c:url value="/cert/"/>' + serverHost;
         }
 
-        function destinationHostFormatter (cellvalue, options, rowObject) {
-        	if (cellvalue === "") {
-        		return "<span style=\"display: none\">hidden</span><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\" title=\"Click here to enter a destination address if it is different from the source\"></span>Forwarding to source";
-        	}
-        	return cellvalue;
+        function destinationHostFormatter(cellvalue, options, rowObject) {
+            if (cellvalue === "") {
+                return "<span class=\"glyphicon glyphicon-info-sign\"></span> Forwarding to source";
+            }
+            return cellvalue;
         }
 
-        function destinationHostUnFormatter (cellvalue, options, rowObject) {
-        	// "hidden" is hidden text in the input box
-        	if (cellvalue.indexOf("hidden") === 0) {
-        		return "";
-        	}
-        	return cellvalue;
+        function destinationHostUnFormatter(cellvalue, options, rowObject) {
+            // "hidden" is hidden text in the input box
+            if (cellvalue.indexOf(" Forwarding to source") === 0) {
+                return "";
+            }
+            return cellvalue;
         }
 
         $(document).ready(function() {
@@ -555,8 +535,8 @@
                     editable : true,
                     formatter : destinationHostFormatter,
                     unformat : destinationHostUnFormatter,
-                    editoptions:{title:"default: forwards to source"},
-                    editrules:{required:false},
+                    editoptions: {title: "default: forwards to source"},
+                    editrules: {required: false},
                 }, {
                     name : 'hostHeader',
                     index : 'hostHeader',
@@ -628,7 +608,7 @@
                 topinfo:"Fields marked with a (*) are required.",
                 width: 400,
                 beforeShowForm: function(formid) {
-                    $("#srcUrl").attr("placeholder", getExampleText("src"));
+                    $("#srcUrl").attr("placeholder", getPlaceholderText("src"));
                 },
                 afterShowForm: function(formid) {
                     /* SHIFT INITIAL FOCUS TO CANCEL TO MINIMIZE ACCIDENTAL CREATION OF
@@ -774,7 +754,7 @@
                         width: 80,
                         editable: true,
                         edittype: 'select',
-                        editoptions: {defaultValue: 0, value: getRequestTypes()},
+                        editoptions: {defaultValue: 0, value: "0:ALL;1:GET;2:PUT;3:POST;4:DELETE"},
                         editrules: {edithidden: true},
                         formatter: requestTypeFormatter,
                         search: true,
@@ -869,10 +849,10 @@
 
                         /* CREATE PLACEHOLDERS FOR ADD FORM. */
                         /* INITIALLY, GRAY */
-                        $("#pathName").attr("placeholder", getExampleText("pathName"));
+                        $("#pathName").attr("placeholder", getPlaceholderText("pathName"));
                         $("#pathName").css("color", "gray");
 
-                        $("#path").attr("placeholder", getExampleText("path"));
+                        $("#path").attr("placeholder", getPlaceholderText("path"));
                         $("#path").css("color", "gray");
                     },
                     afterShowForm: function(formid) {
@@ -1115,7 +1095,7 @@
             }, 100);
         });
 
-        function getExampleText(item) {
+        function getPlaceholderText(item) {
             switch(item) {
                 case "src":
                     return "ex. groupon.com";
