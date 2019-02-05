@@ -48,6 +48,13 @@
         #nav > li > a:focus {
             background-color: #696969;
         }
+
+        #requestOverrideDetails form .form-group label,
+        #responseOverrideDetails form .form-group label,
+        #requestOverrideDetails form button,
+        #responseOverrideDetails form button {
+            margin-right: .25em;
+        }
     </style>
 
     <script type="text/javascript">
@@ -496,26 +503,29 @@
                 $("#tabs-1:visible #responseOverrideSelect, #tabs-2:visible #requestOverrideSelect").first().select2("open");
             });
             Mousetrap.bind('alt+up', function(event) {
-                event.preventDefault();
-                if ($("#tabs-1").is(":visible")) {
+                if ($("#responseOverrideEnabled").is(":visible:focus")) {
+                    event.preventDefault();
                     overrideMoveUp("response");
-                } else if ($("#tabs-2").is(":visible")) {
+                } else if ($("#requestOverrideEnabled").is(":visible:focus")) {
+                    event.preventDefault();
                     overrideMoveUp("request");
                 }
             });
             Mousetrap.bind('alt+down', function(event) {
-                event.preventDefault();
-                if ($("#tabs-1").is(":visible")) {
+                if ($("#responseOverrideEnabled").is(":visible:focus")) {
+                    event.preventDefault();
                     overrideMoveDown("response");
-                } else if ($("#tabs-2").is(":visible")) {
+                } else if ($("#requestOverrideEnabled").is(":visible:focus")) {
+                    event.preventDefault();
                     overrideMoveDown("request");
                 }
             });
             Mousetrap.bind(['backspace', 'del'], function(event) {
-                event.preventDefault();
-                if ($("#tabs-1").is(":visible")) {
+                if ($("#responseOverrideEnabled").is(":visible:focus")) {
+                    event.preventDefault();
                     overrideRemove("response");
-                } else if ($("#tabs-2").is(":visible")) {
+                } else if ($("#requestOverrideEnabled").is(":visible:focus")) {
+                    event.preventDefault();
                     overrideRemove("request");
                 }
             });
@@ -1220,7 +1230,7 @@
             var selector = "select#" + type + "OverrideEnabled" + " option:selected";
             var selection = $(selector);
 
-            selection.each(function(i, selected){
+            selection.each(function(i, selected) {
                 $.ajax({
                     type: 'POST',
                     url: '<c:url value="/api/path/"/>' + id,
@@ -1241,18 +1251,18 @@
             var selector = "select#" + type + "OverrideEnabled" + " option:selected";
             var selection = $(selector);
 
-            selection.each(function(i, selected){
+            selection.each(function(i, selected) {
                 $.ajax({
                     type:"POST",
                     url: '<c:url value="/api/path/"/>' + id,
                     data: ({enabledMoveDown : selected.value, clientUUID : clientUUID}),
-                   success: function(){
-                       if(type == "response") {
-                           populateEnabledResponseOverrides();
-                       }
-                       else {
-                           populateEnabledRequestOverrides();
-                       }
+                    success: function(){
+                        if(type == "response") {
+                            populateEnabledResponseOverrides();
+                        }
+                        else {
+                            populateEnabledRequestOverrides();
+                        }
                    }
                 });
             });
@@ -1423,32 +1433,33 @@
 
         // this returns a formatted string of arguments for display in the "Order" column
         function getFormattedArguments(args, length) {
-            var argString = '';
+            var argString = [];
 
             // show XX instead of an argument since they aren't all set
             if (length > args.length) {
-                for (var x = 0; x < length; x++) {
-                    argString += "XX";
-
-                    if (length - 1 > x)
-                        argString += ",";
+                for (var x = 0; x < length - 1; x++) {
+                    argString.push("XX,");
                 }
-            } else { // show actual arguments
-                jQuery.each(args, function(methodArgsX, methodArgs) {
-                    // truncate methodArgs if it is > 10 char
-                    var displayStr = methodArgs;
-                    if (methodArgs.length > 10) {
-                        displayStr = displayStr.substring(0, 7) + '..';
-                    }
-
-                    argString += displayStr;
-
-                    if (length - 1 > methodArgsX)
-                        argString += ",";
-                });
+                argString.push("XX");
+                return argString.join("");
             }
 
-            return argString;
+            // show actual args
+            $.each(args, function(methodArgsX, methodArg) {
+                var displayStr = methodArg;
+                if (methodArg.length > 10) {
+                    // truncate methodArg if it is > 10 char
+                    displayStr = displayStr.substring(0, 7).trim() + '&hellip;';
+                } else if (!methodArg) {
+                    displayStr = "XX";
+                }
+                argString.push(displayStr);
+                argString.push(",");
+            });
+
+            argString.pop();
+
+            return argString.join("");
         }
 
         // called to load the edit endpoint args
@@ -1462,12 +1473,10 @@
                         return;
                     }
 
-                    // TODO: Convert code below into templatable items
-                    var $formData = $("<form>")
-                        .append($("<div>")
-                            .addClass("bg-info")
-                            .text(data.enabledEndpoint.methodInformation.className + " " + data.enabledEndpoint.methodInformation.methodName));
+                    $("#" + type + "OverrideDetails .panel-title")
+                        .text(data.enabledEndpoint.methodInformation.className + " " + data.enabledEndpoint.methodInformation.methodName);
 
+                    var $formData = $("<form>");
                     var $formDiv = $("<div>").addClass("form-group");
                     $.each(data.enabledEndpoint.methodInformation.methodArguments, function(i, el) {
                         var inputId = type + "_args_" + i;
@@ -1510,7 +1519,10 @@
                         } else {
                             $formDiv
                                 .append($("<label>")
-                                    .attr("for", inputId)
+                                    .attr({
+                                        for: inputId,
+                                        style: "font-weight: normal; font-style: italic;"
+                                    })
                                     .text("(" + el + ")"))
                                 .append($("<input>")
                                     .attr({
@@ -1537,10 +1549,13 @@
 
                     $formData
                         .append($formDiv)
-                        .append($("<input>")
+                        .append($("<button>")
                             .addClass("btn btn-primary")
-                            .text("Apply")
-                            .attr("type", "submit"))
+                            .text("Apply"))
+                        .append($("<button>")
+                            .addClass("btn btn-default")
+                            .attr("type", "reset")
+                            .text("Clear"))
                         .submit(function(e) {
                             submitOverrideData(type, parseInt(pathId), parseInt(methodId), parseInt(ordinal), data.enabledEndpoint.methodInformation.methodArguments.length);
                             e.preventDefault();
@@ -1653,7 +1668,6 @@
         }
 
         function populateEnabledResponseOverrides(autofocusOnForm) {
-
             $.ajax({
                 type:"GET",
                 url : '<c:url value="/api/path/"/>' + currentPathId + '?profileIdentifier=${profile_id}&typeFilter[]=ResponseOverride&typeFilter[]=ResponseHeaderOverride&clientUUID=${clientUUID}',
@@ -1662,7 +1676,7 @@
                     var content = "";
                     var usedIndexes = {};
 
-                    jQuery.each(data.enabledEndpoints, function() {
+                    $.each(data.enabledEndpoints, function() {
                         var enabledId = this.overrideId;
                         var enabledArgs = this.arguments;
                         var repeatNumber = this.repeatNumber;
@@ -1676,8 +1690,9 @@
 
                         // add a repeat number if it exists
                         var repeat = '';
-                        if (repeatNumber >= 0)
+                        if (repeatNumber >= 0) {
                             repeat = repeatNumber + 'x ';
+                        }
 
                         // custom response/request
                         if (enabledId < 0) {
@@ -1697,7 +1712,7 @@
                             }
                             content += '</option>';
                         } else {
-                            jQuery.each(data.possibleEndpoints, function(methodX, method){
+                            $.each(data.possibleEndpoints, function(methodX, method){
                                 if (method.id == enabledId) {
                                     var methodName = method.methodName;
 
