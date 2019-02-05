@@ -488,15 +488,38 @@
             // Filter
             Mousetrap.bind('f', function(event) {
                 event.preventDefault();
-                event.stopPropagation();
                 $("#gs_pathName").focus();
             });
-            // Add override
+            // Add/edit/delete overrides
             Mousetrap.bind('o', function(event) {
                 event.preventDefault();
-                event.stopPropagation();
                 $("#tabs-1:visible #responseOverrideSelect, #tabs-2:visible #requestOverrideSelect").first().select2("open");
             });
+            Mousetrap.bind('alt+up', function(event) {
+                event.preventDefault();
+                if ($("#tabs-1").is(":visible")) {
+                    overrideMoveUp("response");
+                } else if ($("#tabs-2").is(":visible")) {
+                    overrideMoveUp("request");
+                }
+            });
+            Mousetrap.bind('alt+down', function(event) {
+                event.preventDefault();
+                if ($("#tabs-1").is(":visible")) {
+                    overrideMoveDown("response");
+                } else if ($("#tabs-2").is(":visible")) {
+                    overrideMoveDown("request");
+                }
+            });
+            Mousetrap.bind(['backspace', 'del'], function(event) {
+                event.preventDefault();
+                if ($("#tabs-1").is(":visible")) {
+                    overrideRemove("response");
+                } else if ($("#tabs-2").is(":visible")) {
+                    overrideRemove("request");
+                }
+            });
+
 
             $("#serverlist").jqGrid({
                 autowidth : true,
@@ -1074,26 +1097,6 @@
                 search: false
             });
             loadPath(currentPathId);
-
-            // http://stackoverflow.com/questions/11112127/prevent-backspace-from-navigating-back-with-jquery-like-googles-homepage
-            $(document).on("keydown", function (e){
-                if(e.keyCode == 46 || e.keyCode == 8) {
-                    var active = $("#tabs").tabs("option", "active");
-                    if (document.activeElement.id == "responseOverrideEnabled") {
-                        var type = "response"
-                    } else if (document.activeElement.id == "requestOverrideEnabled") {
-                        var type = "request";
-                    } else {
-                        return;
-                    }
-                    var selector = "select#" + type + "OverrideEnabled" + " option:selected";
-                    var selection = $(selector);
-                    if (selection.length > 0) {
-                        e.preventDefault();
-                        overrideRemove(type);
-                    }
-                }
-            });
 
             // temporary kludge to get the sizes right
             setTimeout(function() {
