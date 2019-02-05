@@ -302,28 +302,33 @@
                             id: elementId,
                             onchange: "responseEnabledChanged(" + elementId + ")",
                             checked: cellvalue,
-                            offval: "0"
+                            offval: "0",
+                            "data-path": rowObject.pathId,
+                            "data-row": options.rowId
                         })
+                        .addClass("mousetrap")
                         .val(cellvalue ? "1" : "0")))
                 .html();
         }
 
         function responseEnabledChanged(element) {
-            var id = element.id;
-            var pathId = element.id.substring(17, element.id.length);
-
+            var pathId = $(element).data("path");
             var enabled = element.checked ? 1 : 0;
 
-            var type = type + 'Enabled';
             $.ajax({
-                type:"POST",
+                type: "POST",
                 url: '<c:url value="/api/path/"/>' + pathId,
                 data: 'responseEnabled=' + enabled + '&clientUUID=' + clientUUID,
+                rowId: $(element).data("row"),
+                isEnabled: element.checked,
                 error: function() {
                     alert("Could not properly set value");
                 },
                 success: function() {
                     updateDetailPills();
+                    var rowData = $("#packages").getLocalRow(this.rowId);
+                    rowData.responseEnabled = this.isEnabled;
+                    $("#packages").setRowData(this.rowId, rowData);
                 }
             });
         }
@@ -342,28 +347,33 @@
                             id: elementId,
                             onchange: "requestEnabledChanged(" + elementId + ")",
                             checked: cellvalue,
-                            offval: "0"
+                            offval: "0",
+                            "data-path": rowObject.pathId,
+                            "data-row": options.rowId
                         })
+                        .addClass("mousetrap")
                         .val(cellvalue ? "1" : "0")))
                 .html();
         }
 
         function requestEnabledChanged(element) {
-            var id = element.id;
-            var pathId = element.id.substring(16, element.id.length);
-
+            var pathId = $(element).data("path");
             var enabled = element.checked ? 1 : 0;
 
-            var type = type + 'Enabled';
             $.ajax({
-                type:"POST",
+                type: "POST",
                 url: '<c:url value="/api/path/"/>' + pathId,
                 data: 'requestEnabled=' + enabled + '&clientUUID=' + clientUUID,
+                rowId: $(element).data("row"),
+                isEnabled: element.checked,
                 error: function() {
                     alert("Could not properly set value");
                 },
                 success: function() {
                     updateDetailPills();
+                    var rowData = $("#packages").getLocalRow(this.rowId);
+                    rowData.requestEnabled = this.isEnabled;
+                    $("#packages").setRowData(this.rowId, rowData);
                 }
             });
         }
@@ -738,10 +748,10 @@
                         name: 'pathName',
                         index: 'pathName',
                         width: 330,
+                        editable: true,
                         editrules: {
                             required: true
                         },
-                        editable: true,
                         formoptions: {label: "Path name (*)"},
                         search: true,
                         searchoptions: {
@@ -752,11 +762,11 @@
                         name: 'path',
                         index: 'path',
                         hidden: true,
+                        editable: true,
                         editrules: {
                             required: true,
-                            edithidden: true,
+                            edithidden: true
                         },
-                        editable: true,
                         formoptions: {label: "Path (*)"}
                     },
                     {
@@ -778,10 +788,8 @@
                         name: 'responseEnabled',
                         index: 'responseEnabled',
                         width: "60",
-                        editable: false,
-                        edittype: 'checkbox',
                         align: 'center',
-                        editoptions: { value: "True:False" },
+                        editable: false,
                         formatter: responseEnabledFormatter,
                         formatoptions: {disabled: false},
                         search: true,
@@ -792,10 +800,8 @@
                         name: 'requestEnabled',
                         index: 'requestEnabled',
                         width: "60",
-                        editable: false,
-                        edittype: 'checkbox',
                         align: 'center',
-                        editoptions: { value:"True:False" },
+                        editable: false,
                         formatter: requestEnabledFormatter,
                         formatoptions: {disabled: false},
                         search: true,
@@ -832,7 +838,7 @@
                 sortname : 'id',
                 sortorder : "desc",
                 url : '<c:url value="/api/path?profileIdentifier=${profile_id}&clientUUID=${clientUUID}"/>',
-                viewrecords: true,
+                viewrecords: true
             });
             $("#packages").jqGrid('navGrid', '#packagePager',
                 {
@@ -995,6 +1001,9 @@
             });
 
             $("#gs_pathName").attr("placeholder", "Type here to filter columns (f)");
+            $("#gs_requestType").attr("placeholder", "0...6");
+            $("#gs_responseEnabled").attr("placeholder", "t/f");
+            $("#gs_requestEnabled").attr("placeholder", "t/f");
 
             $("#tabs").tabs();
             $("#sel1").select2();
@@ -1808,6 +1817,7 @@
         }
 
         function highlightSelectedGroups(groupIds) {
+            if (!groupIds) { return; }
             $("#groupTable").jqGrid("resetSelection");
             var ids = groupIds.split(",");
             for(var i = 0; i < ids.length; i++) {
