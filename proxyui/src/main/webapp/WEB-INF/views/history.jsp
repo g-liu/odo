@@ -55,7 +55,6 @@
             resize: vertical;
             display: none;
             font-family: monospace;
-            background-color: #eee;
         }
 
         .copy-only {
