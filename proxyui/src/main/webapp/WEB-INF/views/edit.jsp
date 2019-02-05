@@ -485,9 +485,11 @@
             // Tab nav
             Mousetrap.bind('1', function() {
                 $("[href=\"#tabs-1\"]").click();
+                $("#responseOverrideEnabled").focus();
             });
             Mousetrap.bind('2', function() {
                 $("[href=\"#tabs-2\"]").click();
+                $("#requestOverrideEnabled").focus();
             });
             Mousetrap.bind('3', function() {
                 $("[href=\"#tabs-3\"]").click();
@@ -497,8 +499,7 @@
                 event.preventDefault();
                 $("#gs_pathName").focus();
             });
-            // Add/edit/delete overrides
-            Mousetrap.bind('o', function(event) {
+            Mousetrap.bind('+', function(event) {
                 event.preventDefault();
                 $("#tabs-1:visible #responseOverrideSelect, #tabs-2:visible #requestOverrideSelect").first().select2("open");
             });
@@ -1970,7 +1971,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="responseOverrideSelect">Add override <kbd>o</kbd></label>
+                                                <label for="responseOverrideSelect">Add override <kbd>+</kbd></label>
                                                 <br />
                                                 <select id="responseOverrideSelect" style="width: 100%;" onfocus="this.selectedIndex = -999;" onChange="overrideSelectChanged('response')">
                                                     <option value="-999">Select Override</option>
@@ -2008,7 +2009,7 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="requestOverrideSelect">Add override <kbd>o</kbd></label>
+                                                <label for="requestOverrideSelect">Add override <kbd>+</kbd></label>
                                                 <br />
                                                 <select id="requestOverrideSelect" onfocus="this.selectedIndex = -999;" style="width: 100%;" onChange="overrideSelectChanged('request')">
                                                     <option value="-999">Select Override</option>
