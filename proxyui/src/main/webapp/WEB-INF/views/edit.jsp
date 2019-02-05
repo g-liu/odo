@@ -1035,18 +1035,19 @@
             $("#sel1").select2();
 
             $("#gview_serverlist .ui-jqgrid-titlebar")
+                .append(document.createTextNode("\xa0\xa0"))
                 .append($("<input>")
-                    .attr("id", "serverGroupSelection")
-                    .attr("style", "width: 50%;"))
+                    .attr("id", "serverGroupSelection"))
                 .append($("<button>")
                     .attr({
                         type: "button",
                         id: "editServerGroups",
-                        class: "btn btn-xs"
+                        class: "btn btn-xs btn-default",
+                        style: "float: right; margin-right: 2em;"
                     })
-                    .on("click", toggleServerGroupEdit)
-                    .text("Server Groups")
-                    .append($("<span>").addClass("glyphicon glyphicon-chevron-right")));
+                    .on("click", showServerGroupEdit)
+                    .text("Server Groups ")
+                    .append($("<span>").addClass("glyphicon glyphicon-new-window")));
 
             $("#serverGroupSelection").select2({
                 initSelection: function(element, callback){
@@ -1116,6 +1117,13 @@
                 search: false
             });
             loadPath(currentPathId);
+
+            if ($.ui.dialog.prototype._allowInteraction) {
+                var originalAllowInteraction = $.ui.dialog.prototype._allowInteraction;
+                $.ui.dialog.prototype._allowInteraction = function(e) {
+                    return !!$(e.target).parents(".ui-jqdialog").length || originalAllowInteraction(e);
+                }
+            }
 
             // temporary kludge to get the sizes right
             setTimeout(function() {
@@ -1832,11 +1840,22 @@
                     .append($("<option>").val("-7").text("Custom Post Body")));
         }
 
-        function toggleServerGroupEdit() {
+        function showServerGroupEdit() {
+            let toggleButton = function() {
+                $("#editServerGroups").toggleClass("btn-default btn-primary");
+            }
+
             $("#serverEdit").dialog({
-                title: "Server Groups",
+                title: "Edit Server Groups",
                 width: 400,
-                modal: true
+                modal: true,
+                buttons: {
+                    "Done": function() {
+                        $("#serverEdit").dialog("close");
+                    }
+                },
+                open: toggleButton,
+                close: toggleButton
             });
         }
 
@@ -2115,11 +2134,9 @@
         </div>
     </div>
 
-    <div class="panel panel-default" id="serverEdit" style="display: none;">
-        <div class="panel-body">
-            <table id="serverGroupList"></table>
-            <div id="serverGroupNavGrid"></div>
-        </div>
+    <div id="serverEdit" style="display: none;">
+        <table id="serverGroupList"></table>
+        <div id="serverGroupNavGrid"></div>
     </div>
 </body>
 </html>

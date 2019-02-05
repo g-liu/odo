@@ -30,6 +30,10 @@ textarea {
     color: blue;
 }
 
+.ui-jqgrid .ui-jqgrid-bdiv {
+    overflow-x: hidden;
+}
+
 .paddedtable td {
     padding: 10px;
 }
