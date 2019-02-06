@@ -39,6 +39,7 @@
     <div id="scriptnavGrid"></div>
 
     <script type="text/javascript">
+        'use strict';
         function scriptDivVal(origstr) {
             if (!origstr) return "Click here to edit";
             var lines = origstr.split(/\n/);
