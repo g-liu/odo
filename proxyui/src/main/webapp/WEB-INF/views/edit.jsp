@@ -1396,9 +1396,11 @@
                         }
                         if(type == "response") {
                             selectedResponseOverride = selected.value + "," + ordinal;
+                            $("#responseOverrideSelect").val(-999).trigger("change");
                         }
                         else {
                             selectedRequestOverride = selected.value + "," + ordinal;
+                            $("#requestOverrideSelect").val(-999).trigger("change");
                         }
                     }
                 });
@@ -1425,7 +1427,7 @@
             $("#responseOverrideSelect")
                 .empty()
                 .append($("<option>")
-                    .val("-999").text("Select Override"))
+                    .val(-999).text("Select Override"))
                 .append($("<optgroup>").attr("label", "General")
                     .append($("<option>")
                         .val("-1").text("Custom Response"))
@@ -1773,7 +1775,7 @@
         function populateRequestOverrideList() {
             $("#requestOverrideSelect")
                 .empty()
-                .append($("<option>").val("-999").attr("selected", "selected").text("Select Override"))
+                .append($("<option>").val(-999).attr("selected", "selected").text("Select Override"))
                 .append($("<optgroup>").attr("label", "General")
                     .append($("<option>").val("-2").text("Custom Request"))
                     .append($("<option>").val("-5").text("Set Header"))
@@ -1932,8 +1934,8 @@
                                             <div class="form-group">
                                                 <label for="responseOverrideSelect">Add override <kbd>+</kbd></label>
                                                 <br />
-                                                <select id="responseOverrideSelect" style="width: 100%;" onfocus="this.selectedIndex = -999;" onChange="overrideSelectChanged('response')">
-                                                    <option value="-999">Select Override</option>
+                                                <select id="responseOverrideSelect" style="width: 100%;" onChange="overrideSelectChanged('response')">
+                                                    <option value=-999>Select Override</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -1970,8 +1972,8 @@
                                             <div class="form-group">
                                                 <label for="requestOverrideSelect">Add override <kbd>+</kbd></label>
                                                 <br />
-                                                <select id="requestOverrideSelect" onfocus="this.selectedIndex = -999;" style="width: 100%;" onChange="overrideSelectChanged('request')">
-                                                    <option value="-999">Select Override</option>
+                                                <select id="requestOverrideSelect" style="width: 100%;" onChange="overrideSelectChanged('request')">
+                                                    <option value=-999>Select Override</option>
                                                 </select>
                                             </div>
                                         </div>
