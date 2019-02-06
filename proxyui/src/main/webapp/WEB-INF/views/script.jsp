@@ -10,6 +10,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <%@ include file="/resources/js/webjars.include" %>
+
+    <style type="text/css">
+        #editScript {
+            font-family: monospace;
+        }
+    </style>
 </head>
 <body>
 
@@ -20,7 +26,7 @@
             </div>
 
             <ul id="status2" class="nav navbar-nav navbar-left">
-                <li><a href="#" onClick="window.location='<c:url value = '/profiles' />'">All Profiles</a></li>
+                <li><a target="_BLANK" href="<c:url value='/profiles' />">All Profiles</a></li>
             </div>
         </div>
     </nav>
@@ -33,33 +39,14 @@
     <div id="scriptnavGrid"></div>
 
     <script type="text/javascript">
-        function noenter() {
-          return !(window.event && window.event.keyCode == 13); }
+        function scriptDivVal(origstr) {
+            if (!origstr) return "Click here to edit";
+            var lines = origstr.split(/\n/);
 
-        // shorten to 4 lines
-        function scriptDivVal( origstr ) {
-            var shortenedCell = origstr;
-            var lines = shortenedCell.split(/\n/);
-            var edited = false;
+            if (lines.length <= 4) { return origstr; }
 
-            if (lines.length > 4) {
-                shortenedCell = "";
-                for (var x = 0; x < 4; x++) {
-                    shortenedCell += lines[x];
-                    if (x < 3)
-                        shortenedCell += '\n';
-                }
-                edited = true;
-            }
-
-            if (edited)
-                shortenedCell += "...";
-
-            if (shortenedCell == "") {
-                shortenedCell = "Click here to edit";
-            }
-
-            return shortenedCell;
+            lines[3] = lines[3].trim();
+            return lines.splice(0, 4).join("\n") + "\u2026";
         }
 
         // from http://stackoverflow.com/questions/24816/escaping-html-strings-with-jquery
@@ -72,22 +59,13 @@
             "/": '&#x2F;'
         };
 
-        String.prototype.escapeHTML = function() {
-            return String(this).replace(/[&<>"'\/]/g, function (s) {
-                return __entityMap[s];
-            });
-        }
-
         function customResponseFormatter( cellvalue, options, rowObject ) {
             var shortenedCell = scriptDivVal(cellvalue);
-
             var base_id = "script_" + currentScriptId;
-            var div_id = base_id + "_div";
-            var val_id = base_id + "_val";
 
-            retVal = '<div id="' + base_id + '" onClick="customClick(' + currentScriptId + ')">' + shortenedCell.escapeHTML() + '</div>';
-
-            return retVal;
+            return '<div id="' + base_id + '" onClick="customClick(' + currentScriptId + ')">'
+                + shortenedCell.escapeHTML()
+                + '</div>';
         }
 
         function customClick(scriptId) {
@@ -101,7 +79,6 @@
                     $("#editDialog").dialog({
                         title: "Edit Script: " + data.name,
                         modal: true,
-                        position:['top',20],
                         width: 'auto',
                         buttons: {
                           "Submit": function() {
@@ -143,9 +120,13 @@
             return cellvalue;
         }
 
-
-        $("#scriptlist")
-            .jqGrid({
+        $(document).ready(function() {
+            String.prototype.escapeHTML = function() {
+                return String(this).replace(/[&<>"'\/]/g, function (s) {
+                    return __entityMap[s];
+                });
+            };
+            $("#scriptlist").jqGrid({
                 url : '<c:url value="/api/scripts?type=0"/>',
                 height: "auto",
                 autowidth : true,
@@ -173,6 +154,9 @@
                     editable : false,
                     align: 'left',
                     formatter: customResponseFormatter,
+                    cellattr: function() {
+                        return 'style="font-family: monospace;"'
+                    }
                 }, {
                     name : 'script',
                     index : 'displayScript',
@@ -194,7 +178,6 @@
                 },
                 afterEditCell : function(rowid, cellname, value, iRow, iCol) {
                     var id = $("#scriptlist").getCell(rowid, 'id');
-                   console.log(id);
                     if (cellname == "name") {
                         $("#scriptlist").setGridParam({
                             cellurl : '<c:url value="/api/scripts/"/>' + id
@@ -208,7 +191,7 @@
                 sortname : 'id',
                 viewrecords : true,
                 sortorder : "desc",
-                caption : '<font size="5">Scripts</font>'
+                caption : '<h2>Scripts</h2>'
             });
             $("#scriptlist").jqGrid('navGrid', '#scriptnavGrid', {
                 edit : false,
@@ -234,6 +217,7 @@
                                   $('#scriptlist').getCell (postdata, 'id');
                   }
             });
+        });
     </script>
 </body>
 </html>
