@@ -1116,7 +1116,6 @@
                     setActiveServerGroup(e.added.id);
                 }
             });
-            populateGroups();
 
             $("#packages").jqGrid('navGrid','#packages',{
                 edit: false,
@@ -1339,21 +1338,6 @@
                 $("#requestOverrideParameters").empty();
                 $("#requestOverrideDetails").hide();
             }
-        }
-
-        function populateGroups() {
-            $.ajax({
-                type:"GET",
-                url: '<c:url value="/api/group/"/>',
-                success: function(data) {
-                    var content = "";
-                    for(var index in data.groups) {
-                        var group = data.groups[index];
-                        content += '<option value="' + group.id + '">' + group.name + '</option>';
-                    }
-                    $("#groupSelect").html(content);
-                }
-            });
         }
 
         // get the next available ordinal for methodId on a specific path
