@@ -12,39 +12,50 @@
     <%@ include file="/resources/js/webjars.include" %>
 
     <script type="text/javascript">
-        function rowBuilder(pluginInfo) {
-            var name = pluginInfo.path;
-            var id = pluginInfo.id;
-            var message = pluginInfo.statusMessage;
-            var status = pluginInfo.status;
-
-            if (status == 1) {
-                message = '<font color=\"red\">' + message + '</font>';
-            }
-
-            return '<tr>'
-            + '<td>' + id + '</td>'
-            + '<td>' + name + '</td>'
-            + '<td>' + message + '</td>'
-            //the remove button
-            + '<td><input type="button" onclick="removeRow(' + id + ')" value="Remove Path" /></td>'
-            + '</tr>';
-        }
-
-        //builds the table by appending all of the rows
         function pluginTbodyBuilder(data) {
-            $('#pluginPathTable tbody').html('');
-            for(var i = 0; i < data.plugins.length; i++)
-                $('#pluginPathTable tbody').append(rowBuilder(data.plugins[i]));
-
+            $('#pluginPathTable tbody').empty();
             if (data.plugins.length == 0) {
                 $('#info')
                     .text("There are no valid plugins setup. Please specify one to continue.")
                     .attr("class", "alert-danger")
                     .show();
+                $("#pluginPathTable").hide();
+                return;
             }
-            else {
-                $('#info').hide();
+
+            $('#info').hide();
+            $("#pluginPathTable").show();
+
+            for (var i = 0; i < data.plugins.length; i++) {
+                var pluginInfo = data.plugins[i];
+                var path = pluginInfo.path;
+                var id = pluginInfo.id;
+                var status = pluginInfo.status;
+
+                var messageIndicator = "ok";
+                var messageDisposition = "success";
+                if (status == 1) {
+                    messageIndicator = "remove";
+                    messageDisposition = "danger";
+                }
+                messageIndicator = "<span class=\"glyphicon glyphicon-" + messageIndicator + "-sign text-" + messageDisposition + "\"></span> ";
+                var message = messageIndicator + pluginInfo.statusMessage;
+
+                var $button = $("<input>")
+                    .attr({
+                        type: "button",
+                        class: "btn btn-default"
+                    })
+                    .val("Remove Path")
+                    .click(function() {
+                        removeRow(id);
+                    });
+
+                $('#pluginPathTable tbody').append($("<tr>")
+                    .append($("<td>").text(id))
+                    .append($("<td>").append($("<code>").text(path)))
+                    .append($("<td>").html(message))
+                    .append($("<td>").append($button)));
             }
         }
 
