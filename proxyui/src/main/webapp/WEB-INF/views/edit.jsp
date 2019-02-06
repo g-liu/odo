@@ -1691,6 +1691,9 @@
                 autofocusOnForm: autofocusOnForm,
                 success: function(data) {
                     enabledOverridesSuccess('response', data);
+                    if (selectedResponseOverride != 0) {
+                        $("#responseOverrideEnabled").val(selectedResponseOverride);
+                    }
                     changeResponseOverrideDiv(this.autofocusOnForm);
                 }
             });
@@ -1703,6 +1706,9 @@
                 autofocusOnForm: autofocusOnForm,
                 success: function(data) {
                     enabledOverridesSuccess('request', data);
+                    if (selectedRequestOverride != 0) {
+                        $("#requestOverrideEnabled").val(selectedRequestOverride);
+                    }
                     changeRequestOverrideDiv(this.autofocusOnForm);
                 }
             });
@@ -1741,10 +1747,6 @@
                         .text(repeat + methodName));
                 }
             });
-
-            if (selectedRequestOverride != 0) {
-                $("#" + type + "OverrideEnabled").val(selectedRequestOverride);
-            }
         }
 
         function requestOverrideText(enabledId, enabledArgs) {
