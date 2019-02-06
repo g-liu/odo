@@ -138,11 +138,11 @@
         }
 
         function exportConfigurationFile() {
-            downloadFile('<c:url value="/api/backup/profile/${profile_id}/${clientUUID}"/>');
+            download('<c:url value="/api/backup/profile/${profile_id}/${clientUUID}"/>');
         }
 
         function importConfigurationRequest(file) {
-            downloadFile('<c:url value="/api/backup/profile/${profile_id}/${clientUUID}?oldExport=true"/>');
+            download('<c:url value="/api/backup/profile/${profile_id}/${clientUUID}?oldExport=true"/>');
             var formData = new FormData();
             formData.append('odoImport', $('[name="IncludeOdoConfiguration"]').is(":checked"));
             formData.append('fileData', file, file.name);
@@ -165,7 +165,7 @@
         }
 
         function exportProfileConfiguration() {
-            downloadFile('<c:url value="/api/backup/profile/${profile_id}/${clientUUID}?odoExport=false"/>');
+            download('<c:url value="/api/backup/profile/${profile_id}/${clientUUID}?odoExport=false"/>');
         }
 
         function resetProfile(){
