@@ -1075,7 +1075,7 @@
                     results: function(data){
                         var myResults = [];
                         myResults.push({id: 0, text: "Default"});
-                        jQuery.each(data.servergroups, function(index, value){
+                        $.each(data.servergroups, function(index, value){
                             myResults.push({
                                 id: value.id,
                                 text: value.name
@@ -1428,7 +1428,7 @@
         function populateResponseOverrideList(possibleEndpoints) {
             // preprocess methods into buckets based on class name
             var classHash = {};
-            jQuery.each(possibleEndpoints, function() {
+            $.each(possibleEndpoints, function() {
                 var methodArray = [];
                 if (this.className in classHash) {
                     methodArray = classHash[this.className];
@@ -1447,9 +1447,9 @@
             content += '<option value="-4">Remove Header</option>';
             content += '</optgroup>';
 
-            jQuery.each(classHash, function(hashKey, hashValue) {
+            $.each(classHash, function(hashKey, hashValue) {
                 content += '<optgroup label="' + hashKey + '">';
-                jQuery.each(hashValue, function(arrayKey, arrayValue) {
+                $.each(hashValue, function(arrayKey, arrayValue) {
                     content += '<option value="' + arrayValue.id + '">' + arrayValue.methodName + " (" + arrayValue.description + ")" + '</option>';
                 });
                 content += '</optgroup>';
@@ -1775,7 +1775,7 @@
                     var content = "";
                     var usedIndexes = {};
 
-                    jQuery.each(data.enabledEndpoints, function() {
+                    $.each(data.enabledEndpoints, function() {
                         var enabledId = this.overrideId;
                         var enabledArgs = this.arguments;
                         var repeatNumber = this.repeatNumber;
@@ -1811,7 +1811,7 @@
                             }
                             content += '</option>';
                         } else {
-                            jQuery.each(data.possibleEndpoints, function(methodX, method){
+                            $.each(data.possibleEndpoints, function(methodX, method){
                                 if (method.id == enabledId) {
                                     var methodName = method.methodName;
 
