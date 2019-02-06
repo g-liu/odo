@@ -1024,7 +1024,7 @@
             });
 
             $("#gs_pathName").attr("placeholder", "Type here to filter columns (f)");
-            $("#gs_requestType").attr("placeholder", "0...6");
+            $("#gs_requestType").attr("placeholder", "0...4");
             $("#gs_responseEnabled").attr("placeholder", "t/f");
             $("#gs_requestEnabled").attr("placeholder", "t/f");
 
