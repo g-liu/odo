@@ -9,7 +9,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link href="<c:url value="/resources/css/profiles.css" />" rel="stylesheet" type="text/css" media="screen" />
     <%@ include file="/resources/js/webjars.include" %>
 
     <script type="text/javascript">
@@ -39,11 +38,13 @@
                 $('#pluginPathTable tbody').append(rowBuilder(data.plugins[i]));
 
             if (data.plugins.length == 0) {
-                $('#info').html("There are no valid plugins setup.  Please specify one to continue.");
-                $('#info').css('color', 'red');
+                $('#info')
+                    .text("There are no valid plugins setup. Please specify one to continue.")
+                    .attr("class", "alert-danger")
+                    .show();
             }
             else {
-                $('#info').html("");
+                $('#info').hide();
             }
         }
 
@@ -54,26 +55,36 @@
                     url: 'api/plugins/' + profile_id + '/?requestFromConfiguration=true',
                     success: function(data) {
                         pluginTbodyBuilder(data);
-                        $('#info').html("Removed!");
+                        $('#info')
+                            .text("Removed!")
+                            .attr("class", "alert alert-success")
+                            .show();
                     }
                 });
             }
         }
 
         $(document).ready(function() {
-            $('#info').html("Getting data!");
             $.ajax({
                 type: "GET",
                 url: 'api/plugins?requestFromConfiguration=true',
-                success: function(data) { //this is the data that comes back from the server (the array<array<object>>)
-                    pluginTbodyBuilder(data); //now i pass this data into the tbodybuilder
+                beforeSend: function() {
+                    $('#info')
+                        .text("Getting data!")
+                        .attr("class", "alert alert-info")
+                        .show();
+                },
+                success: function(data) { // array<array<object>>
+                    pluginTbodyBuilder(data);
                 },
                 error: function() {
-                    $('#info').html("Whoops!");
+                    $('#info')
+                        .text("Whoops!")
+                        .attr("class", "alert alert-danger")
+                        .show();
                 }
             });
         });
-
     </script>
 </head>
 <body>
@@ -89,21 +100,32 @@
         </div>
     </nav>
 
-    <div class="ui-widget-content ui-corner-all" style="width: 90%;">
-        <h1>Plugin Paths</h1>
-        <div id="info" style="color: green;margin: 50px;"></div>
-        <table id="pluginPathTable" class="normal-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Path</th>
-                    <th>Status</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-title">Plugin Paths</h1>
+                    </div>
+                    <div class="panel-body">
+                        <div id="info" class="alert alert-warning" role="alert" style="display: none;"></div>
+
+                        <table id="pluginPathTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Path</th>
+                                    <th>Status</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
