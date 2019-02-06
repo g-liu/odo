@@ -1422,24 +1422,28 @@
                 classHash[this.className] = methodArray;
             });
 
-            var content = "";
-            content += '<option value="-999">Select Override</option>';
-
-            content += '<optgroup label="General">';
-            content += '<option value="-1">Custom Response</option>';
-            content += '<option value="-3">Set Header</option>';
-            content += '<option value="-4">Remove Header</option>';
-            content += '</optgroup>';
+            $("#responseOverrideSelect")
+                .empty()
+                .append($("<option>")
+                    .val("-999").text("Select Override"))
+                .append($("<optgroup>").attr("label", "General")
+                    .append($("<option>")
+                        .val("-1").text("Custom Response"))
+                    .append($("<option>")
+                        .val("-3").text("Set Header"))
+                    .append($("<option>")
+                        .val("-4").text("Remove Header")));
 
             $.each(classHash, function(hashKey, hashValue) {
-                content += '<optgroup label="' + hashKey + '">';
+                let $content = $("<optgroup>").attr("label", hashKey);
                 $.each(hashValue, function(arrayKey, arrayValue) {
-                    content += '<option value="' + arrayValue.id + '">' + arrayValue.methodName + " (" + arrayValue.description + ")" + '</option>';
+                    $content.append($("<option>")
+                        .val(arrayValue.id)
+                        .text(arrayValue.methodName + " (" + arrayValue.description + ")"));
                 });
-                content += '</optgroup>';
-            });
 
-            $("#responseOverrideSelect").html(content);
+                $("#responseOverrideSelect").append($content);
+            });
         }
 
         // this returns a formatted string of arguments for display in the "Order" column
