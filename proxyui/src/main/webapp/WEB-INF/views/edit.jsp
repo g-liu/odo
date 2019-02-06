@@ -188,6 +188,17 @@
             });
         }
 
+        // This overrides the jgrid delete button to be more REST friendly
+        $.extend($.jgrid.del, {
+            mtype: "DELETE",
+            serializeDelData: function () {
+                return ""; // don't send and body for the HTTP DELETE
+            },
+            onclickSubmit: function (params, postdata) {
+                params.url += '/' + encodeURIComponent(postdata);
+            }
+        });
+
         function requestTypeFormatter(cellvalue, options, rowObject) {
             if (cellvalue == 0) {
                 return "ALL";
