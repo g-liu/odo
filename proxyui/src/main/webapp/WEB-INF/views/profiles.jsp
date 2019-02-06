@@ -53,10 +53,7 @@
 
         // formatter for the name column
         function nameFormatter(cellvalue, options, rowObject) {
-            var cellContents = '<div class="ui-state-default" title="Edit Profile" onClick="editProfile(' + currentProfileId + ')">';
-            cellContents += '<div><span class="ui-icon ui-icon-carat-1-e" style="float:right"></span></div>';
-            cellContents += '<div>' + cellvalue + '</div></div>'
-            return cellContents;
+            return '<div class="ui-state-default" title="Edit Profile" onClick="editProfile(' + currentProfileId + ')">' + cellvalue + '</div>'
         }
 
         $(document).ready(function() {
@@ -66,55 +63,52 @@
             profileList
             .jqGrid({
                 url : '<c:url value="/api/profile"/>',
-                autowidth : false,
-                sortable:true,
-                sorttext:true,
+                autowidth: false,
+                sortable: true,
+                sorttext: true,
                 multiselect: true,
                 multiboxonly: true,
-                rowList : [], // disable page size dropdown
-                pgbuttons : false, // disable page control like next, back button
-                pgtext : null,
-                cellEdit : true,
-                datatype : "json",
-                colNames : [ 'ID', 'Profile Name', 'Name'],
-                colModel : [ {
-                    name : 'id',
-                    index : 'id',
-                    width : 55,
-                    hidden : true,
+                rowList: [], // disable page size dropdown
+                pgbuttons: false, // disable page control like next, back button
+                pgtext: null,
+                cellEdit: true,
+                datatype: "json",
+                colNames: ['ID', 'Profile Name', 'Name'],
+                colModel: [ {
+                    name: 'id',
+                    index: 'id',
+                    width: 55,
+                    hidden: true,
                     formatter: idFormatter
                 }, {
                     // we have this hidden one so the form Add works properly
-                    name : 'name',
-                    index : 'name',
-                    width : 55,
+                    name: 'name',
+                    index: 'name',
+                    width: 55,
                     editable: true,
-                    hidden : true
+                    hidden: true
                 }, {
-                    name : 'name',
-                    index : 'displayProfileName',
-                    width : 400,
-                    editable : false,
+                    name: 'name',
+                    index: 'displayProfileName',
+                    width: 400,
+                    editable: false,
                     formatter: nameFormatter,
-                    sortable:true
+                    sortable: true
                 }],
                 jsonReader : {
-                    page : "page",
-                    total : "total",
-                    records : "records",
-                    root : 'profiles',
-                    repeatitems : false
+                    page: "page",
+                    total: "total",
+                    records: "records",
+                    root: 'profiles',
+                    repeatitems: false
                 },
-                cellurl : '/testproxy/edit/api/server',
-                rowList : [],
-                pager : '#profilenavGrid',
-                sortname : 'id',
-                viewrecords : true,
-                sortorder : "desc",
-                caption : 'Profiles',
-                sorttype: function(cell){
-                    return profileList.jqGrid('getCell', cell,'Name');
-                }
+                cellurl: '/testproxy/edit/api/server',
+                rowList: [],
+                pager: '#profilenavGrid',
+                sortname: 'id',
+                viewrecords: true,
+                sortorder: "desc",
+                caption: 'Profiles'
             });
             profileList.jqGrid('navGrid', '#profilenavGrid', {
                 edit : false,
@@ -123,14 +117,14 @@
             },
             {},
             {
-                jqModal:true,
+                jqModal: true,
                 url: '<c:url value="/api/profile"/>',
                 beforeShowForm: function(form) {
                     $('#tr_name', form).show();
                 },
                 reloadAfterSubmit: true,
-                closeAfterAdd:true,
-                closeAfterEdit:true,
+                closeAfterAdd: true,
+                closeAfterEdit: true,
                 width: 400
             },
             {
@@ -150,7 +144,6 @@
                     for( var i = 0; i < rowids.length; i++) {
                         var odoId = $(this).jqGrid('getCell', rowids[i], 'id');
                         params += "profileIdentifier=" + odoId + "&";
-
                     }
 
                     rp_ge.url = '<c:url value="/api/profile/delete"/>?' +
