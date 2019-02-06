@@ -1806,7 +1806,7 @@
         <form id="configurationUploadForm">
             <div class="form-group">
                 <label for="configurationUploadFile">Configuration file:</label>
-                <input id="configurationUploadFile" class="form-control" type="file" accept=".json,application/json" name="fileData" />
+                <input id="configurationUploadFile" class="form-control" type="file" name="fileData" />
             </div>
             <div class="form-group form-check">
                 <label for="includeOdoConfiguration" class="form-check-label">Also Import Odo Configuration</label>
