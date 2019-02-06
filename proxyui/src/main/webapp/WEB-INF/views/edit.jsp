@@ -1345,7 +1345,7 @@
             $.ajax({
                 type:"GET",
                 url: '<c:url value="/api/group/"/>',
-                success: function(data){
+                success: function(data) {
                     var content = "";
                     for(var index in data.groups) {
                         var group = data.groups[index];
@@ -1476,7 +1476,7 @@
                 var displayStr = methodArg;
                 if (methodArg.length > 10) {
                     // truncate methodArg if it is > 10 char
-                    displayStr = displayStr.substring(0, 7).trim() + '&hellip;';
+                    displayStr = displayStr.substring(0, 7).trim() + "\u2026";
                 } else if (!methodArg) {
                     displayStr = "XX";
                 }
@@ -1696,71 +1696,11 @@
 
         function populateEnabledResponseOverrides(autofocusOnForm) {
             $.ajax({
-                type:"GET",
+                type: "GET",
                 url : '<c:url value="/api/path/"/>' + currentPathId + '?profileIdentifier=${profile_id}&typeFilter[]=ResponseOverride&typeFilter[]=ResponseHeaderOverride&clientUUID=${clientUUID}',
                 autofocusOnForm: autofocusOnForm,
                 success: function(data) {
-                    var content = "";
-                    var usedIndexes = {};
-
-                    $.each(data.enabledEndpoints, function() {
-                        var enabledId = this.overrideId;
-                        var enabledArgs = this.arguments;
-                        var repeatNumber = this.repeatNumber;
-
-                        // keep track of the ordinal for a specific overrideId so we can pass it around
-                        if (usedIndexes.hasOwnProperty(enabledId)) {
-                            usedIndexes[enabledId]++;
-                        } else {
-                            usedIndexes[enabledId] = 1;
-                        }
-
-                        // add a repeat number if it exists
-                        var repeat = '';
-                        if (repeatNumber >= 0) {
-                            repeat = repeatNumber + 'x ';
-                        }
-
-                        // custom response/request
-                        if (enabledId < 0) {
-                            content += '<option value="' + enabledId + ',' + usedIndexes[enabledId] + '">';
-                            content += repeat;
-
-                            if (enabledId == -1) {
-                                content += 'Custom Response(' + getFormattedArguments( enabledArgs, 1 ) + ')';
-                            } else if (enabledId == -2) {
-                                content += "Custom Request";
-                            } else if (enabledId == -3 || enabledId == -5) {
-                                content += 'Set Header(' + getFormattedArguments( enabledArgs, 2 ) + ')';
-                            } else if (enabledId == -4 || enabledId == -6) {
-                                content += 'Remove Header(' + getFormattedArguments( enabledArgs, 1 ) + ')';
-                            } else if (enabledId == -7) {
-                                content += "Custom Post Body";
-                            }
-                            content += '</option>';
-                        } else {
-                            $.each(data.possibleEndpoints, function(methodX, method){
-                                if (method.id == enabledId) {
-                                    var methodName = method.methodName;
-
-                                    // Add arguments to method name if they exist
-                                    if (method.methodArguments.length > 0) {
-                                        methodName += "(";
-                                        methodName += getFormattedArguments( enabledArgs, method.methodArguments.length );
-                                        methodName += ")";
-                                    }
-                                    content += '<option value="' + enabledId + ',' + usedIndexes[enabledId] + '">' + repeat + methodName + '</option>';
-                                    return(false);
-                                }
-                            });
-                        }
-                    });
-
-                    $("#responseOverrideEnabled").html(content);
-
-                    if(selectedResponseOverride != 0) {
-                        $("#responseOverrideEnabled").val(selectedResponseOverride);
-                    }
+                    enabledOverridesSuccess('response', data);
                     changeResponseOverrideDiv(this.autofocusOnForm);
                 }
             });
@@ -1768,73 +1708,78 @@
 
         function populateEnabledRequestOverrides(autofocusOnForm) {
             $.ajax({
-                type:"GET",
+                type: "GET",
                 url : '<c:url value="/api/path/"/>' + currentPathId + '?profileIdentifier=${profile_id}&typeFilter[]=RequestOverride&typeFilter[]=RequestHeaderOverride&clientUUID=${clientUUID}',
                 autofocusOnForm: autofocusOnForm,
                 success: function(data) {
-                    var content = "";
-                    var usedIndexes = {};
-
-                    $.each(data.enabledEndpoints, function() {
-                        var enabledId = this.overrideId;
-                        var enabledArgs = this.arguments;
-                        var repeatNumber = this.repeatNumber;
-
-                        // keep track of the ordinal for a specific overrideId so we can pass it around
-                        if (usedIndexes.hasOwnProperty(enabledId)) {
-                            usedIndexes[enabledId]++;
-                        } else {
-                            usedIndexes[enabledId] = 1;
-                        }
-
-                        // add a repeat number if it exists
-                        var repeat = '';
-                        if (repeatNumber >= 0) {
-                            repeat = repeatNumber + 'x ';
-                        }
-
-                        // custom response/request
-                        if (enabledId < 0) {
-                            content += '<option value="' + enabledId + ',' + usedIndexes[enabledId] + '">';
-                            content += repeat;
-
-                            if (enabledId == -1) {
-                                content += 'Custom Response(' + getFormattedArguments( enabledArgs, 1 ) + ')';
-                            } else if (enabledId == -2) {
-                                content += "Custom Request";
-                            } else if (enabledId == -3 || enabledId == -5) {
-                                content += 'Set Header(' + getFormattedArguments( enabledArgs, 2 ) + ')';
-                            } else if (enabledId == -4 || enabledId == -6) {
-                                content += 'Remove Header(' + getFormattedArguments( enabledArgs, 1 ) + ')';
-                            } else if (enabledId == -7) {
-                                content += "Custom Post Body";
-                            }
-                            content += '</option>';
-                        } else {
-                            $.each(data.possibleEndpoints, function(methodX, method){
-                                if (method.id == enabledId) {
-                                    var methodName = method.methodName;
-
-                                    // Add arguments to method name if they exist
-                                    if (method.methodArguments.length > 0) {
-                                        methodName += "(";
-                                        methodName += getFormattedArguments( enabledArgs, method.methodArguments.length );
-                                        methodName += ")";
-                                    }
-                                    content += '<option value="' + enabledId + ',' + usedIndexes[enabledId] + '">' + repeat + methodName + '</option>';
-                                }
-                            });
-                        }
-                    });
-
-                    $("#requestOverrideEnabled").html(content);
-
-                    if(selectedRequestOverride != 0) {
-                        $("#requestOverrideEnabled").val(selectedRequestOverride);
-                    }
+                    enabledOverridesSuccess('request', data);
                     changeRequestOverrideDiv(this.autofocusOnForm);
                 }
             });
+        }
+
+        function enabledOverridesSuccess(type, data) {
+            var usedIndexes = {};
+
+            $("#" + type + "OverrideEnabled").empty();
+            $.each(data.enabledEndpoints, function() {
+                var enabledId = this.overrideId;
+
+                usedIndexes[enabledId] = (usedIndexes[enabledId] || 0) + 1;
+                var repeat = this.repeatNumber >= 0 ? this.repeatNumber + "x " : "";
+
+                // custom response/request
+                if (enabledId < 0) {
+                    $("#" + type + "OverrideEnabled").append($("<option>")
+                        .val(enabledId + ',' + usedIndexes[enabledId])
+                        .text(repeat + requestOverrideText(enabledId, this.arguments)));
+                } else {
+                    var method = data.possibleEndpoints.find(function(endpoint) {
+                        return endpoint.id == enabledId;
+                    });
+                    if (!method) { return; }
+
+                    var methodName = method.methodName;
+
+                    // Add arguments to method name if they exist
+                    if (method.methodArguments.length > 0) {
+                        methodName += "(" + getFormattedArguments(this.arguments, method.methodArguments.length) + ")";
+                    }
+
+                    $("#" + type + "OverrideEnabled").append($("<option>")
+                        .val(enabledId + ',' + usedIndexes[enabledId])
+                        .text(repeat + methodName));
+                }
+            });
+
+            if (selectedRequestOverride != 0) {
+                $("#" + type + "OverrideEnabled").val(selectedRequestOverride);
+            }
+        }
+
+        function requestOverrideText(enabledId, enabledArgs) {
+            switch (enabledId) {
+                case -1:
+                    return 'Custom Response(' + getFormattedArguments(enabledArgs, 1) + ')';
+                    break;
+                case -2:
+                    return "Custom Request";
+                    break;
+                case -3:
+                case -5:
+                    return 'Set Header(' + getFormattedArguments(enabledArgs, 2) + ')';
+                    break;
+                case -4:
+                case -6:
+                    return 'Remove Header(' + getFormattedArguments(enabledArgs, 1) + ')';
+                    break;
+                case -7:
+                    return "Custom Post Body";
+                    break;
+                default:
+                    return null;
+                    break;
+            }
         }
 
         function populateRequestOverrideList() {
@@ -1966,7 +1911,7 @@
             </div>
 
             <div id="details" data-spy="affix" class="col-xs-7">
-                <div class="detailsView" id="editDiv">
+                <div class="detailsView" id="editDiv" style="display: none;">
                     <div style="position: relative;">
                         <ul class="nav nav-pills" id="nav">
                         </ul>
