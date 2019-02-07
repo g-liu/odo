@@ -16,7 +16,7 @@
 
         // common function for grid reload
         function reloadGrid(gridId) {
-            jQuery(gridId).setGridParam({datatype:'json', page: 1}).trigger("reloadGrid");
+            $(gridId).setGridParam({datatype:'json', page: 1}).trigger("reloadGrid");
         }
 
         var enabledMethods = {};
@@ -82,16 +82,15 @@
                 loadonce: true,
                 cellurl: '/testproxy/api/group',
                 gridComplete: function() {
-                    if($("#groupsList").length > 0){
-                        jQuery("#groupsList").setSelection(
-                            $("#groupsList").getDataIDs()[0], true);
+                    if ($("#groupsList").length > 0){
+                        $("#groupsList").setSelection($("#groupsList").getDataIDs()[0], true);
                     }
                 },
                 onSelectRow: function(id) {
                     if (id) {
-                        var ret = jQuery("#groupsList").jqGrid('getRowData',id);
+                        var ret = $("#groupsList").jqGrid('getRowData',id);
                         var groupName = ret.name;
-                        $("#title").html(ret.name + " Methods");
+                        $("#overrideList").jqGrid("setCaption", ret.name + " Methods");
                         selectedGroupId = id;
                     }
 
@@ -135,8 +134,6 @@
             );
             $("#groupsList").jqGrid('gridResize');
 
-
-
             $("#overrideList").jqGrid({
                 url: '<c:url value="/api/methods"/>',
                 autowidth: true,
@@ -177,10 +174,10 @@
                 sortorder: 'asc',
                 viewrecords: true,
                 onSelectRow: function(id, status){
-                    if (selectedGroupId === "" || selectingRows == true)
+                    if (selectedGroupId === "" || selectingRows)
                         return;
 
-                    if (status == true) {
+                    if (status) {
                         $.ajax({
                             type:"POST",
                             url:"<c:url value='/api/group/'/>" + selectedGroupId,
@@ -219,6 +216,7 @@
             </ul>
         </div>
     </nav>
+
     <div class="container-fluid">
         <div class="row">
             <div id="groupsDiv" class="col-xs-4">
@@ -228,7 +226,6 @@
 
             <div id="groupOverridesDiv" class="col-xs-8">
                 <div>
-                    <h2><span id="title" class="label label-default"></span></h2>
                     <table id="overrideList"></table>
                     <div id="overrideNavGrid"></div>
                 </div>
