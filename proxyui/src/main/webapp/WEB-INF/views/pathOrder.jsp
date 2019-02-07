@@ -13,28 +13,18 @@
     <style type="text/css">
         #sortable {
             list-style-type: none;
-            margin: 1px;
-            padding: 1px;
-            width: 60%;
+            padding: 0;
+            margin: 0;
         }
 
         #sortable li {
-            margin: 0 3px 3px 3px;
-            padding: 0.4em;
-            padding-left: 1.5em;
             font-size: 1em;
-            height: 18px;
-            width:150%
-        }
-
-        #sortable li span {
-            position: absolute;
-            margin-left: -1.3em;
+            padding: .5em;
+            margin-bottom: .5em;
         }
 
         .ui-state-highlight {
-            height: 1.5em;
-            line-height: 1.2em;
+            height: 2.5em;
         }
     </style>
 
@@ -102,7 +92,7 @@
                             <c:forEach var="pathname" items="${pathnames}">
                                 <li class="ui-state-default ui-corner-all reorderbox" id='${pathname.pathId}'>
                                     <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                                    ${pathname.pathName} ==> ${pathname.path}
+                                    <strong>${pathname.pathName}</strong>&nbsp;&nbsp;&nbsp;<code>${pathname.path}</code>
                                 </li>
                             </c:forEach>
                         </ul>
