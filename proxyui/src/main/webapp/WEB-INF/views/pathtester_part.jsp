@@ -10,28 +10,36 @@ function pathTesterSubmit() {
         url: '<c:url value="/api/path/test"/>',
         data: 'profileIdentifier=${profile_id}&requestType=' + requestType + '&url=' + encoded,
         success: function(data) {
-            // build up grid
-            var grid = "<table id=\"pathTesterTable\" class=\"paddedtable\"><tr><td class=\"ui-widget-header\">#</td>";
-            grid = grid + "<td class=\"ui-widget-header\">Path Name</td>";
-            grid = grid + "<td class=\"ui-widget-header\">Path</td>";
-            grid = grid + "<td class=\"ui-widget-header\">Global</td></tr>";
             data = $.parseJSON(data);
-            var x = 1;
+            $("#pathTesterResults").empty();
+
+            if (data.paths.length === 0) {
+                $("#pathTesterResults").text("No matching path found.");
+                return;
+            }
+
+            var $pathTable = $("<table>")
+                .addClass("paddedtable")
+                .attr("id", "pathTesterTable")
+                .append($("<tr>")
+                    .append($("<td>").addClass("ui-widget-header").text("#"))
+                    .append($("<td>").addClass("ui-widget-header").text("Path Name"))
+                    .append($("<td>").addClass("ui-widget-header").text("Path"))
+                    .append($("<td>").addClass("ui-widget-header").text("Global")));
+
             jQuery.each(data.paths, function(index, value) {
-                grid = grid + "<tr>";
-                grid = grid + "<td class=\"ui-widget-content\">" + x + "</td>";
-                grid = grid + "<td class=\"ui-widget-content\">" + value.pathName + "</td>"
-                grid = grid + "<td class=\"ui-widget-content\">" + value.path + "</td>"
-                grid = grid + "<td class=\"ui-widget-content\">" + value.global + "</td>"
-                grid = grid + "</tr>"
-                x = x + 1;
+                $pathTable
+                    .append($("<tr>")
+                        .append($("<td>").addClass("ui-widget-content").text(index + 1))
+                        .append($("<td>").addClass("ui-widget-content").text(value.pathName))
+                        .append($("<td>").addClass("ui-widget-content").text(value.path))
+                        .append($("<td>").addClass("ui-widget-content").text(value.global)));
             });
 
-            grid = grid + "</table>"
-
-            $("#pathTesterResults").html(grid);
+            $("#pathTesterResults").append($pathTable);
         },
         error: function(xhr) {
+            // TODO: Don't leave this blank!
         }
     });
 }
