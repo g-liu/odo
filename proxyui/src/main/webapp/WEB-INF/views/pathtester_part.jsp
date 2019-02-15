@@ -40,9 +40,11 @@ $(document).ready(function() {
                 });
 
                 $("#pathTesterResults").append($pathTable);
+                $("#pathTesterAlert").alert("close");
             },
             error: function(xhr) {
                 $("#pathTesterResults").empty().text("An error occurred.");
+                $("#pathTesterAlert").alert("close");
             }
         });
     });
@@ -100,7 +102,7 @@ function pathTesterSubmit() {
         </div><!-- /input-group -->
     </form>
 
-    <div class="alert alert-warning alert-dismissible" role="alert">
+    <div id="pathTesterAlert" class="alert alert-warning alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <strong>NOTE:</strong> POST body filters are not taken into account during this test.
     </div>
