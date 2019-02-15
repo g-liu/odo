@@ -99,11 +99,10 @@ function pathTesterSubmit() {
         </div><!-- /input-group -->
     </form>
 
-    <div class="ui-widget">
-        <div class="ui-state-highlight ui-corner-all">
-            <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-            <strong>NOTE:</strong> POST body filters are not taken into account during this test.</p>
-        </div>
+    <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>NOTE:</strong> POST body filters are not taken into account during this test.
     </div>
+
     <div id="pathTesterResults"></div>
 </div><!-- /#pathTesterDialog -->
