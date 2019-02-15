@@ -57,7 +57,7 @@ $(document).ready(function() {
     });
 });
 
-function navigatePathTester() {
+function navigatePathTester(onOpen) {
     $("#pathTesterDialog").dialog({
         title: "Path Tester",
         width: 750,
@@ -67,7 +67,8 @@ function navigatePathTester() {
             "Close": function() {
                 $("#pathTesterDialog").dialog("close");
             }
-        }
+        },
+        open: onOpen
     });
 }
 

@@ -927,28 +927,29 @@
     }
 
     function showPathTester() {
-        // map request type
-        switch(historyData.history.requestType) {
-            case 'ALL':
-                $('#pathTesterRequestType').val(0);
-                break;
-            case 'GET':
-                $('#pathTesterRequestType').val(1);
-                break;
-            case 'PUT':
-                $('#pathTesterRequestType').val(2);
-                break;
-            case 'POST':
-                $('#pathTesterRequestType').val(3);
-                break;
-            case 'DELETE':
-                $('#pathTesterRequestType').val(4);
-                break;
-        }
+        navigatePathTester(function() {
+            // map request type
+            switch(historyData.history.requestType) {
+                case 'ALL':
+                    $('#pathTesterRequestType ~ .dropdown-menu a[data-value=0]').click();
+                    break;
+                case 'GET':
+                    $('#pathTesterRequestType ~ .dropdown-menu a[data-value=1]').click();
+                    break;
+                case 'PUT':
+                    $('#pathTesterRequestType ~ .dropdown-menu a[data-value=2]').click();
+                    break;
+                case 'POST':
+                    $('#pathTesterRequestType ~ .dropdown-menu a[data-value=3]').click();
+                    break;
+                case 'DELETE':
+                    $('#pathTesterRequestType ~ .dropdown-menu a[data-value=4]').click();
+                    break;
+            }
 
-        $('#pathTesterURL').val($("#requestQuery").val() + "?" + $("#requestParameters").val());
-        navigatePathTester();
-        pathTesterSubmit();
+            $('#pathTesterURL').val($("#requestQuery").val() + "?" + $("#requestParameters").val());
+            pathTesterSubmit();
+        });
     }
 
     /**
