@@ -9,9 +9,11 @@ function pathTesterSubmit() {
         type:"GET",
         url: '<c:url value="/api/path/test"/>',
         data: 'profileIdentifier=${profile_id}&requestType=' + requestType + '&url=' + encoded,
+        ajaxSend: function() {
+            $("#pathTesterResults").empty();
+        },
         success: function(data) {
             data = $.parseJSON(data);
-            $("#pathTesterResults").empty();
 
             if (data.paths.length === 0) {
                 $("#pathTesterResults").text("No matching path found.");
@@ -39,7 +41,7 @@ function pathTesterSubmit() {
             $("#pathTesterResults").append($pathTable);
         },
         error: function(xhr) {
-            // TODO: Don't leave this blank!
+            $("#pathTesterResults").text("An error occurred.");
         }
     });
 }
