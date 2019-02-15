@@ -9,10 +9,8 @@ function pathTesterSubmit() {
         type:"GET",
         url: '<c:url value="/api/path/test"/>',
         data: 'profileIdentifier=${profile_id}&requestType=' + requestType + '&url=' + encoded,
-        ajaxSend: function() {
-            $("#pathTesterResults").empty();
-        },
         success: function(data) {
+            $("#pathTesterResults").empty();
             data = $.parseJSON(data);
 
             if (data.paths.length === 0) {
@@ -41,7 +39,7 @@ function pathTesterSubmit() {
             $("#pathTesterResults").append($pathTable);
         },
         error: function(xhr) {
-            $("#pathTesterResults").text("An error occurred.");
+            $("#pathTesterResults").empty().text("An error occurred.");
         }
     });
 }
@@ -62,6 +60,19 @@ function navigatePathTester() {
 
 <!-- Hidden div for path tester -->
 <div id="pathTesterDialog" style="display:none;">
+    <div class="input-group">
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GET <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li><a href="#" value="0">ALL</a></li>
+                <li><a href="#" value="1">GET</a></li>
+                <li><a href="#" value="2">PUT</a></li>
+                <li><a href="#" value="3">POST</a></li>
+                <li><a href="#" value="4">DELETE</a></li>
+            </ul>
+        </div><!-- /btn-group -->
+        <input type="text" class="form-control" aria-label="...">
+    </div><!-- /input-group -->
     <table>
         <tr>
             <td>
