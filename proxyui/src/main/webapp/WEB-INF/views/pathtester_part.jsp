@@ -66,7 +66,7 @@ function navigatePathTester(onOpen) {
     $("#pathTesterDialog").dialog({
         title: "Path Tester",
         width: 750,
-        minHeight: 300,
+        minHeight: 320,
         modal: true,
         buttons: {
             "Close": function() {
@@ -98,7 +98,7 @@ function pathTesterSubmit() {
                     <li data-active="0"><a href="#" data-value="4">DELETE</a></li>
                 </ul>
             </div><!-- /btn-group -->
-            <input id="pathTesterURL" autofocus type="text" class="form-control" />
+            <input id="pathTesterURL" autofocus required type="text" class="form-control" />
             <div class="input-group-btn">
                 <button class="btn btn-primary">Test</button>
             </div>

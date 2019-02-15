@@ -943,6 +943,9 @@
                 case 'DELETE':
                     $('#pathTesterRequestType ~ .dropdown-menu a[data-value=4]').click();
                     break;
+                default:
+                    return;
+                    break;
             }
 
             $('#pathTesterURL').val($("#requestQuery").val() + "?" + $("#requestParameters").val());
