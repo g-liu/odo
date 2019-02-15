@@ -28,8 +28,6 @@
             word-break: break-all;
         }
 
-        .preformatted, textarea.preformatted { font-family: monospace; }
-
         #historyGridDiv {
             margin-bottom: 1em;
         }

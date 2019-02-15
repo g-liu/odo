@@ -22,22 +22,25 @@ $(document).ready(function() {
                 }
 
                 var $pathTable = $("<table>")
-                    .addClass("paddedtable")
+                    .addClass("table table-striped table-bordered table-hover")
                     .attr("id", "pathTesterTable")
-                    .append($("<tr>")
-                        .append($("<td>").addClass("ui-widget-header").text("#"))
-                        .append($("<td>").addClass("ui-widget-header").text("Path Name"))
-                        .append($("<td>").addClass("ui-widget-header").text("Path"))
-                        .append($("<td>").addClass("ui-widget-header").text("Global")));
+                        .append($("<thead>")
+                            .append($("<tr>")
+                                .append($("<th>").text("#"))
+                                .append($("<th>").text("Path Name"))
+                                .append($("<th>").text("Path"))
+                                .append($("<th>").text("Global?"))));
 
+                var $pathTableBody = $("<tbody>");
                 jQuery.each(data.paths, function(index, value) {
-                    $pathTable
-                        .append($("<tr>")
-                            .append($("<td>").addClass("ui-widget-content").text(index + 1))
-                            .append($("<td>").addClass("ui-widget-content").text(value.pathName))
-                            .append($("<td>").addClass("ui-widget-content").text(value.path))
-                            .append($("<td>").addClass("ui-widget-content").text(value.global)));
+                    $pathTableBody.append($("<tr>")
+                        .append($("<td>").text(index + 1))
+                        .append($("<td>").text(value.pathName))
+                        .append($("<td>").addClass("preformatted").text(value.path))
+                        .append($("<td>").text(value.global ? "Yes" : "No")));
                 });
+
+                $pathTable.append($pathTableBody);
 
                 $("#pathTesterResults").append($pathTable);
                 $("#pathTesterAlert").alert("close");
@@ -81,7 +84,7 @@ function pathTesterSubmit() {
 
 <!-- Hidden div for path tester -->
 <div id="pathTesterDialog" style="display:none;">
-    <form>
+    <form style="margin-bottom: 1em;">
         <div class="input-group">
             <div class="input-group-btn">
                 <button id="pathTesterRequestType" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
