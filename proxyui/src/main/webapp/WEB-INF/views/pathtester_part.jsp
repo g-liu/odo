@@ -1,53 +1,67 @@
 <script type="text/javascript">
 'use strict';
-function pathTesterSubmit() {
-    var url = $('#pathTesterURL').val();
-    var requestType = $('#pathTesterRequestType').val();
-    var encoded = encodeURIComponent(url);
+$(document).ready(function() {
+    $("#pathTesterDialog form").on("submit", function(e) {
+        e.preventDefault();
 
-    $.ajax({
-        type:"GET",
-        url: '<c:url value="/api/path/test"/>',
-        data: 'profileIdentifier=${profile_id}&requestType=' + requestType + '&url=' + encoded,
-        success: function(data) {
-            $("#pathTesterResults").empty();
-            data = $.parseJSON(data);
+        var url = $('#pathTesterURL').val();
+        var requestType = $('#pathTesterRequestType ~ .dropdown-menu li[data-active=1] a').attr("data-value");
+        var encoded = encodeURIComponent(url);
 
-            if (data.paths.length === 0) {
-                $("#pathTesterResults").text("No matching path found.");
-                return;
-            }
+        $.ajax({
+            type:"GET",
+            url: '<c:url value="/api/path/test"/>',
+            data: 'profileIdentifier=${profile_id}&requestType=' + requestType + '&url=' + encoded,
+            success: function(data) {
+                $("#pathTesterResults").empty();
+                data = $.parseJSON(data);
 
-            var $pathTable = $("<table>")
-                .addClass("paddedtable")
-                .attr("id", "pathTesterTable")
-                .append($("<tr>")
-                    .append($("<td>").addClass("ui-widget-header").text("#"))
-                    .append($("<td>").addClass("ui-widget-header").text("Path Name"))
-                    .append($("<td>").addClass("ui-widget-header").text("Path"))
-                    .append($("<td>").addClass("ui-widget-header").text("Global")));
+                if (data.paths.length === 0) {
+                    $("#pathTesterResults").text("No matching path found.");
+                    return;
+                }
 
-            jQuery.each(data.paths, function(index, value) {
-                $pathTable
+                var $pathTable = $("<table>")
+                    .addClass("paddedtable")
+                    .attr("id", "pathTesterTable")
                     .append($("<tr>")
-                        .append($("<td>").addClass("ui-widget-content").text(index + 1))
-                        .append($("<td>").addClass("ui-widget-content").text(value.pathName))
-                        .append($("<td>").addClass("ui-widget-content").text(value.path))
-                        .append($("<td>").addClass("ui-widget-content").text(value.global)));
-            });
+                        .append($("<td>").addClass("ui-widget-header").text("#"))
+                        .append($("<td>").addClass("ui-widget-header").text("Path Name"))
+                        .append($("<td>").addClass("ui-widget-header").text("Path"))
+                        .append($("<td>").addClass("ui-widget-header").text("Global")));
 
-            $("#pathTesterResults").append($pathTable);
-        },
-        error: function(xhr) {
-            $("#pathTesterResults").empty().text("An error occurred.");
-        }
+                jQuery.each(data.paths, function(index, value) {
+                    $pathTable
+                        .append($("<tr>")
+                            .append($("<td>").addClass("ui-widget-content").text(index + 1))
+                            .append($("<td>").addClass("ui-widget-content").text(value.pathName))
+                            .append($("<td>").addClass("ui-widget-content").text(value.path))
+                            .append($("<td>").addClass("ui-widget-content").text(value.global)));
+                });
+
+                $("#pathTesterResults").append($pathTable);
+            },
+            error: function(xhr) {
+                $("#pathTesterResults").empty().text("An error occurred.");
+            }
+        });
     });
-}
+
+    $("#pathTesterRequestType ~ .dropdown-menu a").click(function(event) {
+        event.preventDefault();
+        let $target = $(event.target);
+        $target.closest("ul").children("li").attr("data-active", "0");
+        $target.closest("li").attr("data-active", "1");
+
+        $("#pathTesterRequestType span.requestType").text($target.text());
+    });
+});
 
 function navigatePathTester() {
     $("#pathTesterDialog").dialog({
         title: "Path Tester",
         width: 750,
+        minHeight: 300,
         modal: true,
         buttons: {
             "Close": function() {
@@ -56,43 +70,35 @@ function navigatePathTester() {
         }
     });
 }
+
+function pathTesterSubmit() {
+    $("#pathTesterDialog form").submit();
+}
 </script>
 
 <!-- Hidden div for path tester -->
 <div id="pathTesterDialog" style="display:none;">
-    <div class="input-group">
-        <div class="input-group-btn">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GET <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                <li><a href="#" value="0">ALL</a></li>
-                <li><a href="#" value="1">GET</a></li>
-                <li><a href="#" value="2">PUT</a></li>
-                <li><a href="#" value="3">POST</a></li>
-                <li><a href="#" value="4">DELETE</a></li>
-            </ul>
-        </div><!-- /btn-group -->
-        <input type="text" class="form-control" aria-label="...">
-    </div><!-- /input-group -->
-    <table>
-        <tr>
-            <td>
-                <label for="pathTesterURL">URL to Test:</label>
-                <input id="pathTesterURL" size=45 />
-            </td>
-            <td>
-                <select id="pathTesterRequestType" class="form-control" style="width:auto;">
-                    <option value="0">ALL</option>
-                    <option value="1">GET</option>
-                    <option value="2">PUT</option>
-                    <option value="3">POST</option>
-                    <option value="4">DELETE</option>
-                </select>
-            </td>
-            <td>
-                <button class="btn btn-primary" onclick="pathTesterSubmit()">Test</button>
-            </td>
-        </tr>
-    </table>
+    <form>
+        <div class="input-group">
+            <div class="input-group-btn">
+                <button id="pathTesterRequestType" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="requestType">GET</span> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li data-active="0"><a href="#" data-value="0">ALL</a></li>
+                    <li data-active="1"><a href="#" data-value="1">GET</a></li>
+                    <li data-active="0"><a href="#" data-value="2">PUT</a></li>
+                    <li data-active="0"><a href="#" data-value="3">POST</a></li>
+                    <li data-active="0"><a href="#" data-value="4">DELETE</a></li>
+                </ul>
+            </div><!-- /btn-group -->
+            <input id="pathTesterURL" autofocus type="text" class="form-control" />
+            <div class="input-group-btn">
+                <button class="btn btn-primary">Test</button>
+            </div>
+        </div><!-- /input-group -->
+    </form>
+
     <div class="ui-widget">
         <div class="ui-state-highlight ui-corner-all">
             <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
