@@ -129,11 +129,16 @@ function changeClientSubmit(id) {
     window.location.href = url;
 }
 
+function getCaption() {
+    return "Current client UUID: <span style=\"color: blue;\">${clientUUID}</span>";
+}
+
 $(document).ready(function() {
     var lastSelected = -2;
     $("#clientlist").jqGrid({
         url: '<c:url value="/api/profile/${profile_id}/clients"/>',
         autowidth: true,
+        caption: getCaption(),
         rowList: [], // disable page size dropdown
         pgbuttons: false, // disable page control like next, back button
         pgtext: null,
@@ -151,7 +156,7 @@ $(document).ready(function() {
             name: "uuid",
             path: "uuid",
             editable: false,
-            width: "300",
+            width: "200",
             align: "left",
             formatter: uuidFormatter
         }, {
@@ -217,7 +222,7 @@ $(document).ready(function() {
         },
         rowattr: function(rowData, currentObj, rowId) { /* HIGHLIGHTS THE CURRENT CLIENT */
             if( rowData.uuid === clientUUID ) {
-                return {"class": "selectedRow"};
+                return {class: "selectedRow"};
             }
         },
         ajaxRowOptions: {
@@ -280,10 +285,10 @@ $(document).ready(function() {
 </script>
 
 <!-- Hidden div for clients -->
-<div id="changeClientDialog" style="display:none">
+<div id="changeClientDialog" style="display: none;">
     <div id="clientContainer">
-        <b>Current client UUID: <font color="blue">${clientUUID}</font></b><br>
-        <table id="clientlist" style="width: 100%;"></table><br>
+        <table id="clientlist"></table>
+
         <div id="clientnavGrid"></div>
     </div>
 </div>
